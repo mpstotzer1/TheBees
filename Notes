@@ -1,0 +1,14 @@
+NOTE:	The subFood method in Hive.java returns the total amount of foodCost not met. While nothing
+		makes use of this yet, you could use it to decide how severe the bee mortality is
+		in starvation mode.
+NOTE:	Periodically throughout the code there are "Throw ... warning!" comments. These need to be
+		picked up later when you get around to giving the player warnings.
+NOTE:	Drones should be their own "department," as should clustered bees
+NOTE:	Look into a way to hard code the default department for worker and drone Batches
+NOTE:	The Queen's health should be perpetually declining, but declining slower based on how much her
+		attendant bees are helping. Need to make it worth it to try and keep queen healthy
+NOTE:	Figure out how Events, Situations, and States work (put them into a Circumstance Manager?)
+		-An Event is triggered by a conditional and doesn't need to save any information
+		-A Situation is triggered by a conditional, lasts for a set amount of time, and influences
+		 the hive's variables. It might need to save how it changed the variable.
+		-A State is triggered by a conditional, has no timer, and is "untriggered" by a conditional
