@@ -1,26 +1,22 @@
 //Resources that belong to the hive
 public class Resource {
-	private int amount;
-	private int potency;
+	protected int amount;
 	
-	public Resource(int p){
+	public Resource(){
 		amount = 0;
-		potency = p;
 	}
-	public Resource(int a, int p){
+	public Resource(int a){
 		amount = a;
-		potency = p;
 	}
 	
 	//Useful Methods
 	public void add(int a){ amount += a; }
 	public void sub(int a){ amount -= a; }
-	public int getFoodValue(){ return amount*potency; }
+	public void addPercent(double p){ amount += amount*p; }
+	public void subPercent(double p){ amount -= amount*p; }
 	
 	//Getters
 	public int getAmount(){ return amount; }
-	public int getPotency(){ return potency; }
 	//Setters
 	public void setAmount(int a){ amount = a; }
-	public void setPotency(int p){ potency = p; }	
 }

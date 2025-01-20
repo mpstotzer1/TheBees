@@ -22,22 +22,29 @@ public class Department {
 		}
 	}
 	
-	//Useful methods for getting the foodCost and heat per bee in department (averages of jobs)
-	public int getFoodCost(){
+	//Useful methods for getting the foodCost and heat per bee in department (sum of its jobs)
+	public int getTotalFoodCost(){
 		int foodCost = 0;
 		for(int i=0; i < jobs.size(); i++){
-			foodCost += jobs.get(i).getFoodCost();
+			foodCost += jobs.get(i).getFoodCost(numBees);
 		}
 		foodCost /= jobs.size();
 		return foodCost;
 	}
-	public int getHeat(){
+	public int getTotalHeat(){
 		int heatGenerated = 0;
 		for(int i=0; i < jobs.size(); i++){
-			heatGenerated += jobs.get(i).getHeat();
+			heatGenerated += jobs.get(i).getHeat(numBees);
 		}
 		heatGenerated /= jobs.size();
 		return heatGenerated;
+	}
+	
+	
+	public void produce(){
+		for(int i=0; i < jobs.size(); i++){
+			jobs.get(i).produce(numBees);
+		}
 	}
 	
 	//Getters

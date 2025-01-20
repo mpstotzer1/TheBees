@@ -1,38 +1,53 @@
 //A job produces EXACTLY one RESOURCE, generates a FOODCOST, and generates HEAT
-public class Job {
-	private int prodConst;
-	private int foodConst;
-	private int heatConst;
-	private Department department;
+//Its output can be controlled by modifiers
+import java.util.ArrayList;
+
+abstract class Job {
+	protected Resource resource;
+	protected ArrayList<Situation> prodMod = new ArrayList<Situation>();
+	protected ArrayList<Situation> foodMod = new ArrayList<Situation>();
+	protected ArrayList<Situation> heatMod = new ArrayList<Situation>();
 	
-	//Constructor
-	public Job(Department dept){
-		department = dept;
+	//Useful Methods
+	public int getFoodCost(int numBees){//Get the food cost
+		double multiplier = 1;
+		for(int i = 0; i < foodMod.size(); i++){
+			multiplier *= foodMod.get(i).getModifier();
+		}
+		return (int)(numBees * multiplier);
 	}
-	public Job(int pc, int fc, int hc, Department dept){
-		prodConst = pc;
-		foodConst = fc;
-		heatConst = hc;
-		department = dept;
+	public int getHeat(int numBees){//Get the head generated
+		double multiplier = 1;
+		for(int i = 0; i < heatMod.size(); i++){
+			multiplier *= heatMod.get(i).getModifier();
+		}
+		return (int)(numBees * multiplier);//Adjust appropriate resources appropriately
+	}
+	public abstract void produce(int numBees);
+	public abstract int willProduce(int numBees);
+
+	//Update the modifier countdown timers
+	public void updateMods(){
+		for(int i = 0; i < prodMod.size(); i++){ prodMod.get(i).decrement(); }
+		for(int i = 0; i < foodMod.size(); i++){ foodMod.get(i).decrement(); }
+		for(int i = 0; i < heatMod.size(); i++){ heatMod.get(i).decrement(); }
 	}
 	
-	//Return how much the accomplishing the job will produce, eat, and heat up the hive
-	public int getResource(){
-		return department.getNumBees()*prodConst;
+	//kind of Setters (adding modifiers to the ArrayLists)
+	public void addProdMod(int c, double m){
+		Situation situation = new Situation(c, m);
+		prodMod.add(situation);
 	}
-	public int getFoodCost(){
-		return department.getNumBees()*foodConst;
+	public void addProdMod(int c, double m, boolean p){
+		Situation situation = new Situation(c, m, p);
+		prodMod.add(situation);
 	}
-	public int getHeat(){
-		return department.getNumBees()*heatConst;
+	public void addFoodMod(int c, double m){
+		Situation situation = new Situation(c, m);
+		prodMod.add(situation);
 	}
-	
-	//Getters
-	public int getProdConst(){ return prodConst; }
-	public int getfoodConst(){ return foodConst; }
-	public int getheatConst(){ return heatConst; }
-	//Setters
-	public void setProdConst(int p){ prodConst = p; }
-	public void setFoodConst(int c){ foodConst = c; }
-	public void setHeatConst(int h){ heatConst = h; }
+	public void addHeatMod(int c, double m){
+		Situation situation = new Situation(c, m);
+		prodMod.add(situation);
+	}
 }
