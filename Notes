@@ -4,11 +4,8 @@ NOTE:	The Occurrences have a lot of flexibility. Make the most out of it with fu
 NOTE:	Newly-created bees are added to the houseBees department
 
 
-TO DO:	-Find out how the Queen(s)'s health(s) drain(s) and put that in the update method
-		-Make the Game object, but PLAN IT OUT FIRST!
+TO DO:
 		-Figure out how seasons will work, particularly winter
-		-Use a Hashmap for upgrades
-		-Make a coherent constructor for the Hive (maybe use factory methods?)
 		-Figure out how to throw warnings to the player
 		-Eventually figure out the proper decimal number for heatTempConst
 		-In Controller.java, discern the best approach to populating the "Info" classes
@@ -20,9 +17,7 @@ CONSIDERATIONS:
 	-Reduce the complexity of occurrences to only a FEW bad things that are influenced by
 	 the hive's variables (strength, hygiene, etc.)?
 	-Hard code the default department for worker and drone Batches?
-	-Create a subclass of Resource as FoodResource (strength having "potency" doesn't make any sense...)
 	-Change Hive's "cluster" department to "beard" department? (depending on how winter clustering works)
-	-Is there any way to reduce the hugeness of the Hive constructor?
 	-Maybe add a mechanic for maximum honey, etc. capacity that needs to be upgraded with wax?
 	-Go through and split apart functions that do too many things (like Hive.java's adjustTemp())
 	-In AbstractResources.java, the setter methods might be wrong and not needed

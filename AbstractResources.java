@@ -2,7 +2,7 @@
 public class AbstractResources {
 	private Resource hygiene;
 	private Resource lowHygiene; //This is the threshold for hygiene; below it and you're officially diseased.
-	private Resource lowQueenHealth;//Below this, the queen is officially infirm
+	private Resource lowQueenHealth; //Below this, the queen is officially infirm
 	private Resource strength;
 	private Resource xp;
 	

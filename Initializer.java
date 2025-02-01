@@ -1,4 +1,4 @@
-//The Controller manages the Hive's operations
+//The Initializer creates a Hive
  /* 	I want the Controller to create an instance of Hive and then instantiate all its variables i.e. make
  * a functioning Hive object. It should essentially keep the Hive in a loop that updates it constantly
  * and doesn't break until the player wins or loses. Every time it calls the Hive.update() function, it should
@@ -21,9 +21,9 @@ import java.util.HashMap;
 
 public class Initializer{
     private HashMap<String, Double> upgrades = new HashMap<String, Double>(){{}};
-	private Hive hive;
+	//private Hive hive;
     
-    public Initializer(){
+    public Hive createHive(){
     	//Productivity upgrades for Jobs
     	upgrades.put("nurseQueenHealthProd", 1.0);
     	upgrades.put("foragerNectarProd", 1.0);
@@ -46,7 +46,6 @@ public class Initializer{
     	//Increase Strength
     	upgrades.put("strengthMult", 1.0);
     	//Make Occurrences less disastrous? Or less likely?
-    	
     	//Make seasons better(more flowers?)
     	upgrades.put("flowerMult", 1.0);
     	//Kill fewer bees from starvation
@@ -86,7 +85,6 @@ public class Initializer{
     	JobInfo jobInfo = new JobInfo(foragerNectar, foragerPollen, waxMasonWax, droneXP,
     									nurseQueenHealth, guardStrength, houseBeeHygiene,
     									clusterIdle, fannerHoney);
-    	
     	Department nurse = new Department(nurseQueenHealth);
     	Department forager = new Department(foragerNectar, foragerPollen);
     	Department guard = new Department(guardStrength);
@@ -105,11 +103,12 @@ public class Initializer{
     	//HiveResources hiveResources = new HiveResources();
     	
 //Does this work? Instantiating hive with a constructor after it was already semi-constructed as a member variable?
-    	setHive(new Hive(physicalResources, abstractResources, temperatureInfo, queenContainer, departmentInfo, jobInfo, nurseryInfo, upgrades));
+    	Hive hive = new Hive(physicalResources, abstractResources, temperatureInfo, queenContainer, departmentInfo, jobInfo, nurseryInfo, upgrades);
+    	return hive;
     }
 
     //Getters and Setters
-	public Hive getHive(){ return hive; }
-	public void setHive(Hive hive){ this.hive = hive; }
+	//public Hive getHive(){ return hive; }
+	//public void setHive(Hive hive){ this.hive = hive; }
     
 }
