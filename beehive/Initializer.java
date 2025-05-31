@@ -21,14 +21,12 @@ package beehive;
 import beehive.department.Department;
 import beehive.department.DepartmentInfo;
 import beehive.job.*;
-import beehive.nursery.NurseryInfo;
 import beehive.queen.QueenContainer;
 import beehive.resource.AbstractResources;
 import beehive.resource.PhysicalResources;
 import beehive.resource.PotentResource;
 import beehive.resource.Resource;
 import beehive.temperature.TemperatureInfo;
-import beehive.world.Season;
 import beehive.world.WorldInfo;
 
 import java.util.HashMap;
@@ -111,7 +109,7 @@ public class Initializer{
     	DepartmentInfo departmentInfo = new DepartmentInfo(nurse, forager, guard, waxMason, houseBee, fanner, drone, cluster);
 
 
-    	NurseryInfo nurseryInfo = new NurseryInfo();
+    	XNurseryInfo nurseryInfo = new XNurseryInfo();
 
     	//UpgradeInfo upgradeInfo = new UpgradeInfo(upgrades);
 

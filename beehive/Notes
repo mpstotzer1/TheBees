@@ -24,4 +24,6 @@ CONSIDERATIONS:
 	-In AbstractResources.java, the setter methods might be wrong and not needed
 	
 
-LEFT OFF AT: Hive.java. Clean up the big update() method!
+LEFT OFF AT: Hive.java
+                Clean up the big update() method
+                    Refactor Nursery (out of existence)

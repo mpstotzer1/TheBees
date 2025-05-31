@@ -25,28 +25,28 @@ public class TemperatureInfo {
 	public void incHiveTemp(double ht) { hiveTemp *= ht; }
 	public void decHiveTemp(double ht) { hiveTemp /= ht; }
 
-	public double minTempRegulation(){
-		switch(temperatureRegulationRanges){
-			case BROOD:
-				return 91.0;
-			case GENERAL:
-				return 57.0;
-			case OFF:
-				return -1000.0;
-		}
-		return -1000.0;
-	}
-	public double maxTempRegulation(){
-		switch(temperatureRegulationRanges){
-			case BROOD:
-				return 97.0;
-			case GENERAL:
-				return 113.0;
-			case OFF:
-				return 1000.0;
-		}
-		return 1000.0;
-	}
+//	public double minTempRegulation(){
+//		switch(temperatureRegulationRanges){
+//			case BROOD:
+//				return 91.0;
+//			case GENERAL:
+//				return 57.0;
+//			case OFF:
+//				return -1000.0;
+//		}
+//		return -1000.0;
+//	}
+//	public double maxTempRegulation(){
+//		switch(temperatureRegulationRanges){
+//			case BROOD:
+//				return 97.0;
+//			case GENERAL:
+//				return 113.0;
+//			case OFF:
+//				return 1000.0;
+//		}
+//		return 1000.0;
+//	}
 	
 	//The getters and setters
 	public double getHiveTemp() { return hiveTemp; }
@@ -55,6 +55,7 @@ public class TemperatureInfo {
 	public void setHeatTempConst(double heatTempConst) { this.heatTempConst = heatTempConst; }
 	public double getTempFoodConst() { return tempFoodConst; }
 	public void setTempFoodConst(double tempFoodConst) { this.tempFoodConst = tempFoodConst; }
+	public TemperatureRegulationRanges getTemperatureRegulationRanges() { return temperatureRegulationRanges; }
 	public double getTempRegulationStep() { return tempRegulationStep; }
 	public double getTempRegulationFoodCostConstant() { return tempRegulationFoodCostConstant; }
 

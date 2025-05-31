@@ -1,17 +1,19 @@
 package beehive;
-//Each hive has many resources, departments, and jobs
+//Each hive has many resources, departments, and jobs.
 
+import java.util.HashMap;
+import java.lang.Math;
+
+import beehive.department.Department;
 import beehive.department.DepartmentInfo;
 import beehive.job.JobInfo;
-import beehive.nursery.NurseryInfo;
 import beehive.queen.QueenContainer;
 import beehive.resource.AbstractResources;
 import beehive.resource.PhysicalResources;
 import beehive.temperature.TemperatureInfo;
+import beehive.temperature.TemperatureRegulationRanges;
 import beehive.world.WorldInfo;
 
-import java.util.HashMap;
-import java.lang.Math;
 
 public class Hive{
 	//Information Classes--important for constructor!
@@ -23,7 +25,6 @@ public class Hive{
 	private QueenContainer queenContainer;
 	private DepartmentInfo departmentInfo;
 	private JobInfo jobInfo;
-	private NurseryInfo nurseryInfo;
 	private HashMap<String, Double> upgrades;
 	//Miscellaneous others--do not need to go in the constructor
 	private int starvation = 0;
@@ -37,7 +38,6 @@ public class Hive{
 				QueenContainer queenContainer,
 				DepartmentInfo departmentInfo,
 				JobInfo jobInfo,
-				NurseryInfo nurseryInfo,
 				HashMap<String, Double> upgrades){
 		//Your physical resources
 		this.physicalResources = physicalResources;
@@ -52,13 +52,11 @@ public class Hive{
 		this.departmentInfo = departmentInfo;
 		//Your Jobs (nomenclature: departmentResourceInfluenced)
 		this.jobInfo = jobInfo;
-		//The Nursery
-		this.nurseryInfo = nurseryInfo;
 		//Upgrade-related variables
 		this.upgrades = upgrades;
 	}
 	
-	
+
 	
 	//The all-powerful update method
 	public void update(){
@@ -66,9 +64,11 @@ public class Hive{
 		updateJobs();
 		updateTemperature();
 
-		starvation *= upgrades.get("foodCostMult");
 		updateNursery();
-			//check if the nursery is operational, and mature the brood if so
+		//check if the nursery is operational, and mature the brood if so
+
+		starvation *= upgrades.get("foodCostMult");
+
 		updateOccurrences(starvation);
 			//Maybe throw warnings/memos?
 		//Decrease beehive.queen health
@@ -157,13 +157,13 @@ public class Hive{
 		return (int)(foodCost);
 	}
 	private boolean hiveTooHot(){
-		return (temperatureInfo.getHiveTemp() > temperatureInfo.maxTempRegulation());
+		return (temperatureInfo.getHiveTemp() > temperatureInfo.getTemperatureRegulationRanges().getMaxTemperature());
 	}
 	private boolean hiveTooCold(){
-		return (temperatureInfo.getHiveTemp() < temperatureInfo.minTempRegulation());
+		return (temperatureInfo.getHiveTemp() < temperatureInfo.getTemperatureRegulationRanges().getMinTemperature());
 	}
-	private double minMinusHive() { return temperatureInfo.minTempRegulation() - temperatureInfo.getHiveTemp(); }
-	private double maxMinusHive() { return temperatureInfo.maxTempRegulation() - temperatureInfo.getHiveTemp(); }
+	private double maxMinusHive() { return temperatureInfo.getTemperatureRegulationRanges().getMaxTemperature() - temperatureInfo.getHiveTemp(); }
+	private double minMinusHive() { return temperatureInfo.getTemperatureRegulationRanges().getMinTemperature() - temperatureInfo.getHiveTemp(); }
 	private double clampToStep(double tempChange) {
 		double step = temperatureInfo.getTempRegulationStep();
 
@@ -197,14 +197,27 @@ public class Hive{
 	
 	//updateNursery() is nice and simple
 	private void updateNursery(){
-		if(temperatureInfo.getHiveTemp() < 91 || temperatureInfo.getHiveTemp() > 97){//Too hot or cold for brood
-			nurseryInfo.getNursery().destroyBrood();
-			nurseryInfo.getNursery().shutdown();
-		}else{
-			nurseryInfo.getNursery().reopen();
-			nurseryInfo.getNursery().update();
+		if(insideBroodTempRange()){
+			createWorkerBees();
 		}
 	}
+	private boolean insideBroodTempRange(){
+		double hiveTemp = temperatureInfo.getHiveTemp();
+		double minBroodTemp = TemperatureRegulationRanges.BROOD.getMinTemperature();
+		double maxBroodTemp = TemperatureRegulationRanges.BROOD.getMaxTemperature();
+
+		if(minBroodTemp <= hiveTemp && hiveTemp <= maxBroodTemp){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	private void createWorkerBees(){
+		int pollen = physicalResources.getPollen().getAmount();
+		pollen /= getTotalBees();
+		addBees(pollen, departmentInfo.getCluster());
+	}
+
 
 	//World
 	private void updateWorld(){
@@ -331,6 +344,9 @@ public class Hive{
 	}
 	
 	//Some Helpful Methods
+	private void addBees(int beesToAdd, Department destination){
+		destination.addBees(beesToAdd);
+	}
 	private void killBees(int beesToKill){
 		int total = getTotalBees();
 		double percent = 0;
