@@ -6,11 +6,12 @@ NOTE:   Time is governed by "ticks" of a clock (1 tick = 1/2 second)
 
 
 TO DO:
+        -Get upgrades figured out, get constants figured out
+        -Figure out how to throw warnings to the player
 		-Figure out how seasons will work, particularly winter
-		-Figure out how to throw warnings to the player
 		-Eventually figure out the proper decimal number for heatTempConst
 		-In Controller.java, discern the best approach to populating the "Info" classes
-		-Determine if the UpgradeInfo class is needed, and if not, delete it
+
 		
 
 CONSIDERATIONS:
@@ -26,4 +27,4 @@ CONSIDERATIONS:
 
 LEFT OFF AT: Hive.java
                 Clean up the big update() method
-                    Refactor Nursery (out of existence)
+                    Refactored the subFood() method so it handles starvation by directly killing bees (maybe throw starvation warning?)

@@ -1,6 +1,7 @@
 package beehive;
 //Each hive has many resources, departments, and jobs.
 
+import java.lang.classfile.attribute.NestHostAttribute;
 import java.util.HashMap;
 import java.lang.Math;
 
@@ -10,6 +11,7 @@ import beehive.job.JobInfo;
 import beehive.queen.QueenContainer;
 import beehive.resource.AbstractResources;
 import beehive.resource.PhysicalResources;
+import beehive.resource.PotentResource;
 import beehive.temperature.TemperatureInfo;
 import beehive.temperature.TemperatureRegulationRanges;
 import beehive.world.WorldInfo;
@@ -26,9 +28,7 @@ public class Hive{
 	private DepartmentInfo departmentInfo;
 	private JobInfo jobInfo;
 	private HashMap<String, Double> upgrades;
-	//Miscellaneous others--do not need to go in the constructor
-	private int starvation = 0;
-	
+
 		
 	//A "big-boned" constructor
 	public Hive(PhysicalResources physicalResources,
@@ -63,9 +63,19 @@ public class Hive{
 		updateWorld();
 		updateJobs();
 		updateTemperature();
-
 		updateNursery();
-		//check if the nursery is operational, and mature the brood if so
+
+
+
+
+
+
+		//LEFT OFF HERE
+
+
+
+
+
 
 		starvation *= upgrades.get("foodCostMult");
 
@@ -170,31 +180,7 @@ public class Hive{
 		if(tempChange > step){ return step; }
 		return tempChange;
 	}
-	
-	//subFood() takes a foodCost and depletes resources accordingly
-	private void subFood(int foodCost){
-		if(foodCost <= physicalResources.getNectar().getFoodValue()){//Eat only nectar
-			physicalResources.getNectar().sub(foodCost / physicalResources.getNectar().getPotency());
-			foodCost = 0;
-		}else{//Eat into honey reserves
-			//Drain all nectar to partially sate foodCost
-			foodCost -= physicalResources.getNectar().getFoodValue();
-			physicalResources.getNectar().setAmount(0);
-			//Do you have enough honey?
-			if(foodCost <= physicalResources.getHoney().getFoodValue()){//Have enough honey
-				physicalResources.getHoney().sub(foodCost / physicalResources.getHoney().getPotency());
-				foodCost = 0;
-				//Throw honey warning
-			}else{//Do not have enough honey aka starvation
-				foodCost -= physicalResources.getHoney().getFoodValue();
-				physicalResources.getHoney().setAmount(0);
-				//Throw starvation warning
-			}	
-		}
-		//Set remaining insatiety equal to the "starvation" variable
-		starvation = foodCost;
-	}
-	
+
 	//updateNursery() is nice and simple
 	private void updateNursery(){
 		if(insideBroodTempRange()){
@@ -217,7 +203,6 @@ public class Hive{
 		pollen /= getTotalBees();
 		addBees(pollen, departmentInfo.getCluster());
 	}
-
 
 	//World
 	private void updateWorld(){
@@ -373,6 +358,35 @@ public class Hive{
 		}
 		return total;
 	}
+	//subFood() refactored using Google Gemini
+	public void subFood(int initialFoodCost){
+		PotentResource nectar = physicalResources.getNectar();
+		PotentResource honey = physicalResources.getHoney();
+		int remainingDeficit = initialFoodCost;
+
+		remainingDeficit = attemptDrainResource(nectar, initialFoodCost);
+		remainingDeficit = attemptDrainResource(honey, remainingDeficit);
+
+		if(remainingDeficit > 0){
+			int beesToKill = (int)(remainingDeficit * upgrades.get("starvationMult"));
+			killBees(beesToKill);
+		}
+	}
+	//attemptDrainResource() created using Google Gemini
+	private int attemptDrainResource(PotentResource resource, int currentDeficit){
+		if(currentDeficit <= 0){ return 0; }
+
+		int resourceFoodValue = resource.getFoodValue();
+
+		if(currentDeficit <= resourceFoodValue){
+			resource.sub(currentDeficit / resource.getPotency());
+			return 0;
+		}else{
+			resource.setAmount(0);
+			return (currentDeficit - resourceFoodValue);
+		}
+	}
+
 
 	public boolean getGameLost(){ return gameLost; }
 	public void setGameLost(boolean gameLost){ this.gameLost = gameLost; }
