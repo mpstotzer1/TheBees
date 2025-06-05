@@ -21,12 +21,13 @@ package beehive;
 import beehive.department.Department;
 import beehive.department.DepartmentInfo;
 import beehive.job.*;
-import beehive.queen.QueenContainer;
+import beehive.miscData.MiscellaneousData;
 import beehive.resource.AbstractResources;
 import beehive.resource.PhysicalResources;
 import beehive.resource.PotentResource;
 import beehive.resource.Resource;
 import beehive.temperature.TemperatureInfo;
+import beehive.world.Season;
 import beehive.world.WorldInfo;
 
 import java.util.HashMap;
@@ -48,12 +49,6 @@ public class Initializer{
     	upgrades.put("foodCostMult", 1.0);
     	//Insulate hive from temperature fluctuations
     	upgrades.put("insulation", 1.0);
-    	//Faster brood production
-    	upgrades.put("queenCountdown", 50.0);
-    	upgrades.put("droneCountdown", 40.0);
-    	upgrades.put("workerCountdown", 30.0);
-    	//Unlock how to make a beehive.queen (0 is false, 1 is true)
-    	upgrades.put("canMakeQueen", 0.0);
     	//Increase Strength
     	upgrades.put("strengthMult", 1.0);
     	//Make Occurrences less disastrous? Or less likely?
@@ -62,11 +57,8 @@ public class Initializer{
     	//Kill fewer bees from starvation
     	upgrades.put("starvationMult", 1.0);
     	//(Adjustable) nursery costs
-    	upgrades.put("queenCost", 100.0);
     	upgrades.put("droneCost", 80.0);
     	upgrades.put("workerCost", 60.0);
-    	//Make beehive.queen healthier (i.e. die less quickly)
-    	upgrades.put("queenHealthDecMult", 1.0);
     	
     	//FOLLOW THIS PATTERN! (maybe a bunch of default constructors is better, though?)
     	Resource pollen = new Resource(100);
@@ -75,29 +67,43 @@ public class Initializer{
     	Resource wax = new Resource(100);
     	PhysicalResources physicalResources = new PhysicalResources(pollen, nectar, honey, wax);
 
-    	AbstractResources abstractResources = new AbstractResources(100, 20, 20, 0, 0);
+    	AbstractResources abstractResources = new AbstractResources(100, 20, 100, 20, 0, 0);
 
     	TemperatureInfo temperatureInfo = new TemperatureInfo(94, 10000, 10.0, 1.0, 100.0);
 
-		WorldInfo worldInfo = new WorldInfo(SeasonType.SPRING);
+		Season season = new Season();
+		WorldInfo worldInfo = new WorldInfo(season);
 
-    	QueenContainer queenContainer = new QueenContainer();
 
+		//Job Section
+		ResourceAddStrategy resourceAddStrategy = new ResourceAddStrategy();
+		ResourceSetStrategy resourceSetStrategy = new ResourceSetStrategy();
+		ResourceNullStrategy resourceNullStrategy = new ResourceNullStrategy();
+		HiveCreateBeesCommand hiveCreateBeesCommand = new HiveCreateBeesCommand();
+		HiveAdjustTemperatureCommand hiveAdjustTemperatureCommand = new HiveAdjustTemperatureCommand();
     	//AdditiveJobs
-    	Job foragerNectar = new AdditiveJob(physicalResources.getNectar());
-    	Job foragerPollen = new AdditiveJob(physicalResources.getPollen());
-    	Job waxMasonWax = new AdditiveJob(physicalResources.getWax());
-    	Job droneXP = new AdditiveJob(abstractResources.getXp());
+		DepartmentJob foragerNectar = new DepartmentJob(physicalResources.getNectar(), resourceAddStrategy, 1.0, 1.0);
+		DepartmentJob foragerPollen = new DepartmentJob(physicalResources.getPollen(), resourceAddStrategy, 1.0, 1.0);
+		DepartmentJob waxMasonWax = new DepartmentJob(physicalResources.getWax(), resourceAddStrategy, 1.0, 1.0);
+		DepartmentJob droneXP = new DepartmentJob(abstractResources.getXp(), resourceAddStrategy, 1.0, 1.0);
     	//SettingJobs
-    	Job nurseQueenHealth = new SettingJob(queenContainer.getHealthDec());
-    	Job guardStrength = new SettingJob(abstractResources.getStrength());
-    	Job houseBeeHygiene = new SettingJob(abstractResources.getHygiene());
+		DepartmentJob nurseQueenHealth = new DepartmentJob(abstractResources.getQueenHealth(), resourceSetStrategy, 1.0, 1.0);
+		DepartmentJob guardStrength = new DepartmentJob(abstractResources.getStrength(), resourceSetStrategy, 1.0, 1.0);
+		DepartmentJob houseBeeHygiene = new DepartmentJob(abstractResources.getHygiene(), resourceSetStrategy, 1.0, 1.0);
     	//NullJobs
-    	Job clusterIdle = new NullJob();
-    	Job fannerHoney = new NullJob();
-    	JobInfo jobInfo = new JobInfo(foragerNectar, foragerPollen, waxMasonWax, droneXP,
-    									nurseQueenHealth, guardStrength, houseBeeHygiene,
-    									clusterIdle, fannerHoney);
+		DepartmentJob clusterIdle = new DepartmentJob(abstractResources.getNullResource(), resourceNullStrategy, 1.0, 1.0);
+		DepartmentJob fannerHoney = new DepartmentJob(abstractResources.getNullResource(), resourceNullStrategy, 1.0, 1.0);
+		//Autoregulated Hive jobs
+		HiveJob createBees = new HiveJob(hiveCreateBeesCommand, 1.0, 1.0);
+		HiveJob adjustTemperature = new HiveJob(hiveAdjustTemperatureCommand, 1.0, 1.0);
+
+		DepartmentJobInfo departmentJobInfo = new DepartmenJobInfo(foragerNectar, foragerPollen, waxMasonWax, droneXP,
+				nurseQueenHealth, guardStrength, houseBeeHygiene,
+				clusterIdle, fannerHoney);
+		HiveJobInfo hiveJobInfo = new HiveJobInfo(createBees, adjustTemperature);
+
+    	JobInfo jobInfo = new JobInfo(departmentJobInfo, hiveJobInfo);
+
     	Department nurse = new Department(nurseQueenHealth);
     	Department forager = new Department(foragerNectar, foragerPollen);
     	Department guard = new Department(guardStrength);
@@ -108,15 +114,14 @@ public class Initializer{
     	Department cluster = new Department(clusterIdle);
     	DepartmentInfo departmentInfo = new DepartmentInfo(nurse, forager, guard, waxMason, houseBee, fanner, drone, cluster);
 
-
-    	XNurseryInfo nurseryInfo = new XNurseryInfo();
+		MiscellaneousData miscellaneousData = new MiscellaneousData();
 
     	//UpgradeInfo upgradeInfo = new UpgradeInfo(upgrades);
 
     	//HiveResources hiveResources = new HiveResources();
 
 //Does this work? Instantiating hive with a constructor after it was already semi-constructed as a member variable?
-    	Hive hive = new Hive(physicalResources, abstractResources, temperatureInfo, worldInfo, queenContainer, departmentInfo, jobInfo, nurseryInfo, upgrades);
+    	Hive hive = new Hive(physicalResources, abstractResources, temperatureInfo, worldInfo, departmentInfo, jobInfo, miscellaneousData, upgrades);
     	return hive;
     }
 

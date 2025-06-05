@@ -15,7 +15,7 @@ TO DO:
 		
 
 CONSIDERATIONS:
-	-Make the bad situation/event/states more interesting than "some bees died"?
+	-Make the bad eventModifier/event/states more interesting than "some bees died"?
 	-Reduce the complexity of occurrences to only a FEW bad things that are influenced by
 	 the hive's variables (strength, hygiene, etc.)?
 	-Hard code the default department for worker and drone Batches?
@@ -27,4 +27,5 @@ CONSIDERATIONS:
 
 LEFT OFF AT: Hive.java
                 Clean up the big update() method
-                    Refactored the subFood() method so it handles starvation by directly killing bees (maybe throw starvation warning?)
+                    Left off at updating hives jobs vs department jobs and how they will fit into jobInfo (or just be two separate things)
+             Fix Season and weather enums to have hard values (like the temperatureRegulationRanges enum)

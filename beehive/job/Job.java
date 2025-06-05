@@ -2,57 +2,58 @@
 //Its output can be controlled by modifiers
 package beehive.job;
 
-import beehive.resource.Resource;
-import beehive.situation.Situation;
-
 import java.util.ArrayList;
+import java.util.Iterator;
 
-public abstract class Job {
-	protected Resource resource;
-	protected ArrayList<Situation> prodMod = new ArrayList<Situation>();
-	protected ArrayList<Situation> foodMod = new ArrayList<Situation>();
-	protected ArrayList<Situation> heatMod = new ArrayList<Situation>();
-	
+import beehive.event.EventModifier;
+
+abstract class Job {
+	protected double foodCostConstant;
+	protected double heatCostConstant;
+	protected ArrayList<EventModifier> prodMod = new ArrayList<EventModifier>();
+	protected ArrayList<EventModifier> foodMod = new ArrayList<EventModifier>();
+	protected ArrayList<EventModifier> heatMod = new ArrayList<EventModifier>();
+
 	//Useful Methods
-	public int getFoodCost(int numBees){//Get the food cost
+//	abstract int getFoodCost(int numBees);
+//	abstract int getHeat(int numBees);
+//	abstract void produce(int numBees);
+	protected double calcListMultiplier(ArrayList<EventModifier> modList){
 		double multiplier = 1;
-		for(int i = 0; i < foodMod.size(); i++){
-			multiplier *= foodMod.get(i).getModifier();
+		for(int i = 0; i < modList.size(); i++){
+			multiplier *= modList.get(i).getModifier();
 		}
-		return (int)(numBees * multiplier);
+		return multiplier;
 	}
-	public int getHeat(int numBees){//Get the head generated
-		double multiplier = 1;
-		for(int i = 0; i < heatMod.size(); i++){
-			multiplier *= heatMod.get(i).getModifier();
-		}
-		return (int)(numBees * multiplier);//Adjust appropriate resources appropriately
-	}
-	public abstract void produce(int numBees);
-	public abstract int willProduce(int numBees);
 
 	//Update the modifier countdown timers
 	public void updateMods(){
-		for(int i = 0; i < prodMod.size(); i++){ prodMod.get(i).decrement(); }
-		for(int i = 0; i < foodMod.size(); i++){ foodMod.get(i).decrement(); }
-		for(int i = 0; i < heatMod.size(); i++){ heatMod.get(i).decrement(); }
+		updateMod(prodMod);
+		updateMod(foodMod);
+		updateMod(heatMod);
+	}
+	private void updateMod(ArrayList<EventModifier> modList){
+		Iterator<EventModifier> iterator = modList.iterator();
+
+		while(iterator.hasNext()){
+			EventModifier mod = iterator.next();
+			mod.decrement();
+			if (mod.getCountdown() <= 0) { iterator.remove(); }
+		}
 	}
 	
 	//kind of Setters (adding modifiers to the ArrayLists)
-	public void addProdMod(int c, double m){
-		Situation situation = new Situation(c, m);
-		prodMod.add(situation);
+	public void addProdMod(int duration, double modifier){
+		addMod(duration, modifier, prodMod);
 	}
-	public void addProdMod(int c, double m, boolean p){
-		Situation situation = new Situation(c, m, p);
-		prodMod.add(situation);
+	public void addFoodMod(int duration, double modifier){
+		addMod(duration, modifier, foodMod);
 	}
-	public void addFoodMod(int c, double m){
-		Situation situation = new Situation(c, m);
-		prodMod.add(situation);
+	public void addHeatMod(int duration, double modifier){
+		addMod(duration, modifier, heatMod);
 	}
-	public void addHeatMod(int c, double m){
-		Situation situation = new Situation(c, m);
-		prodMod.add(situation);
+	private void addMod(int duration, double modifier, ArrayList<EventModifier> modList){
+		EventModifier eventModifier = new EventModifier(duration, modifier);
+		modList.add(eventModifier);
 	}
 }

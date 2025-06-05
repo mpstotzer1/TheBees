@@ -1,28 +1,19 @@
-package beehive.situation;
+package beehive.event;
 //Situations are periods of time that change the hive's variables (like faster wax production, or decreased strength)
-public class Situation {
+public class EventModifier {
 	private int countdown;
 	private double modifier;
-	private boolean permanent;
-	
+
 	//Constructor
 	//"permanent" is false by default
-	public Situation(int c, double m){
+	public EventModifier(int c, double m){
 		countdown = c;
 		modifier = m;
-		permanent = false;
-	}
-	public Situation(int c, double m, boolean p){
-		countdown = c;
-		modifier = m;
-		permanent = p;
 	}
 	
 	//Useful methods
 	public void decrement(){
-		if(!permanent){
-			countdown-=1;
-		}
+		countdown-=1;
 	}
 	
 	//Getters and Setters
