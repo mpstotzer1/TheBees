@@ -23,9 +23,6 @@ public enum TemperatureRegulationRanges {
 }
 
 
-
-
-
 //    // You can also add other methods if needed, e.g., to check if a temperature is within the season's range
 //    public boolean isTemperatureInSeason(int temperature) {
 //        return temperature >= minTemperature && temperature <= maxTemperature;
@@ -48,4 +45,4 @@ public enum TemperatureRegulationRanges {
 //        int currentTemperature = 18;
 //        System.out.println("Is " + currentTemperature + " degrees in Summer? " + Season.SUMMER.isTemperatureInSeason(currentTemperature));
 //        System.out.println("Is " + currentTemperature + " degrees in Spring? " + Season.SPRING.isTemperatureInSeason(currentTemperature));
-//    }
+//

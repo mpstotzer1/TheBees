@@ -5,48 +5,30 @@ import java.util.Random;
 public class Season{
     private SeasonType seasonType;
     private double seasonLength;
-    private double minTemp;
-    private double maxTemp;
     private double currentTemp;
 
     public Season(){
         seasonType = SeasonType.SPRING;
         setSeasonLength();
-        setTempRange();
         currentTemp = calcAverageTemp();
     }
-
 
     public void update(){
         nudgeCurrentTemp();
         seasonLength--;
         if(seasonLength <= 0){
             moveToNextSeason();
-            setTempRange();
             setSeasonLength();
         }
     }
 
-    private void setTempRange(){
-        switch(seasonType){
-            case SPRING:
-                minTemp = 50;
-                maxTemp = 70;
-            case SUMMER:
-                minTemp = 70;
-                maxTemp = 100;
-            case FALL:
-                minTemp = 40;
-                maxTemp = 60;
-            case WINTER:
-                minTemp = 20;
-                maxTemp = 50;
-        }
+    private void setSeasonLength(){
+        seasonLength = 120;
     }
     private void nudgeCurrentTemp(){
-        if(currentTemp <= minTemp){
+        if(currentTemp <= seasonType.getLowTemp()){
             currentTemp++;
-        }else if(currentTemp >= maxTemp){
+        }else if(currentTemp >= seasonType.getHighTemp()){
             currentTemp--;
         }else{
             currentTemp += calcNudge();
@@ -59,7 +41,7 @@ public class Season{
         else{ return -1.0; }
     }
     private double calcAverageTemp(){
-        return maxTemp + minTemp / 2.0;
+        return seasonType.getHighTemp() + seasonType.getLowTemp() / 2.0;
     }
     private void moveToNextSeason(){
         switch(seasonType){
@@ -73,11 +55,7 @@ public class Season{
                 seasonType = SeasonType.SPRING;
         }
     }
-    private void setSeasonLength(){
-        seasonLength = 300;
-    }
 
-    public double getMinTemp() { return minTemp; }
-    public double getMaxTemp() { return maxTemp; }
+    public SeasonType getSeasonType(){ return seasonType; }
     public double getCurrentTemp() { return currentTemp; }
 }

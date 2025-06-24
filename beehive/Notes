@@ -8,11 +8,9 @@ NOTE:   Time is governed by "ticks" of a clock (1 tick = 1/2 second)
 TO DO:
         -Get upgrades figured out, get constants figured out
         -Figure out how to throw warnings to the player
-		-Figure out how seasons will work, particularly winter
+		-Figure out winter
 		-Eventually figure out the proper decimal number for heatTempConst
-		-In Controller.java, discern the best approach to populating the "Info" classes
 
-		
 
 CONSIDERATIONS:
 	-Make the bad eventModifier/event/states more interesting than "some bees died"?
@@ -21,11 +19,6 @@ CONSIDERATIONS:
 	-Hard code the default department for worker and drone Batches?
 	-Change Hive's "cluster" department to "beard" department? (depending on how winter clustering works)
 	-Maybe add a mechanic for maximum honey, etc. capacity that needs to be upgraded with wax?
-	-Go through and split apart functions that do too many things (like Hive.java's adjustTemp())
-	-In AbstractResources.java, the setter methods might be wrong and not needed
-	
 
-LEFT OFF AT: Hive.java
-                Clean up the big update() method
-                    Left off at updating hives jobs vs department jobs and how they will fit into jobInfo (or just be two separate things)
-             Fix Season and weather enums to have hard values (like the temperatureRegulationRanges enum)
+
+LEFT OFF AT:

@@ -17,4 +17,7 @@ public class WorldInfo {
     public double getWorldTemp(){
         return season.getCurrentTemp() + weather.getAdditionalTemperature();
     }
+    public Season getSeason(){
+        return season;
+    }
 }

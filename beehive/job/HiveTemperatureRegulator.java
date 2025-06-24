@@ -2,36 +2,22 @@ package beehive.job;
 
 import beehive.Hive;
 
-public class HiveAdjustTemperatureCommand implements HiveCommand{
+public class HiveTemperatureRegulator extends Modifiable{
     private Hive hive;
 
-    public HiveAdjustTemperatureCommand(){}
-
-    public void execute(Hive hive, double multiplier){
-        this.hive = hive;
-        updateTemperature();
+    public HiveTemperatureRegulator(double foodCostConstant, double heatConstant, double productionConstant){
+        modifiers = new Modifiers(foodCostConstant, heatConstant, productionConstant);
     }
-    //updateTemperature() helper functions
-    private void updateTemperature(){
-        double deltaHeat = calcProductionHeat() + calcHowMuchHiveTempChangesInResponseToCurrentWorldTemp();
-        hive.getTemperatureInfo().changeHiveTemp(deltaHeat);
+
+    public void update(Hive hive){
+        this.hive = hive;
 
         regulateHiveTemperature();
+        modifiers.update();
     }
-    private int calcProductionHeat(){
-        int heat = 0;
-        for(int i = 0; i < hive.getDepartmentInfo().getDepartments().size(); i++){
-            heat += hive.getDepartmentInfo().getDepartments().get(i).getTotalHeat();
-        }
-        return heat;
-    }
-    private double calcHowMuchHiveTempChangesInResponseToCurrentWorldTemp(){
-        double deltaTemp = hive.getWorldInfo().getWorldTemp() - hive.getTemperatureInfo().getHiveTemp();
-        deltaTemp *= .1;
-        return deltaTemp;
-    }
+    //helper functions
     private void regulateHiveTemperature(){
-        double tempAdjustment = calcTempAdjustment();
+        double tempAdjustment = calcTempAdjustment() * modifiers.calcProdMultiplier();
         hive.getTemperatureInfo().changeHiveTemp(tempAdjustment);
 
         int foodCost = calcTempRegulationFoodCost(tempAdjustment);
@@ -70,7 +56,7 @@ public class HiveAdjustTemperatureCommand implements HiveCommand{
         return tempChange;
     }
     private int calcTempRegulationFoodCost(double tempAdjustment){
-        double foodCost = tempAdjustment * hive.getTemperatureInfo().getTempRegulationFoodCostConstant();
+        double foodCost = tempAdjustment * modifiers.calcFoodMultiplier();
         foodCost /= hive.getUpgrades().get("insulation");
 
         return (int)(foodCost);

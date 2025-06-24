@@ -1,17 +1,30 @@
 package beehive.event;
 
-abstract class Situation {
+import beehive.Hive;
+import beehive.event.situationStrategies.Strategy;
+
+public class Situation {
     private boolean doneOnce;
-    protected int duration;
+    private int duration;
+    private Strategy strategy;
 
-    public final void execute(){
+    public Situation(int duration, Strategy strategy){
+        this.duration = duration;
+        this.strategy = strategy;
+
+        doneOnce = false;
+    }
+
+    public final void update(Hive hive){
         if(duration > 0){
-            if(!doneOnce){ doOnce(); }
+            if(!doneOnce){
+                strategy.doOnce(duration, hive);
+                doneOnce = true;
+            }
 
-            doContinuously();
+            strategy.doContinuous(hive);
             duration--;
         }
     }
-    abstract void doOnce();
-    abstract void doContinuously();
+
 }

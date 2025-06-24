@@ -6,6 +6,7 @@ public class PotentResource extends Resource {
 	public PotentResource(int p){
 		amount = 0;
 		potency = p;
+		ResourceData rd = new ResourceData(1, 1);
 	}
 	public PotentResource(int a, int p){
 		amount = a;

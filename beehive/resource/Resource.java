@@ -1,5 +1,5 @@
 package beehive.resource;
-//Resources that belong to the hive
+
 public class Resource {
 	protected int amount;
 	

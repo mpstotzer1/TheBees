@@ -28,19 +28,6 @@ public class Weather {
     }
 
     public double getAdditionalTemperature(){
-        switch(weatherType){
-            case FRIGID:
-                return -10.0;
-            case COLD:
-                return -5.0;
-            case MILD:
-                return 0.0;
-            case HOT:
-                return 5.0;
-            case SCORCHING:
-                return 10.0;
-        }
-
-        return 0.0;
+        return weatherType.getAdditionalTemp();
     }
 }

@@ -9,7 +9,7 @@ public class Runner{
 
 		boolean flag = true;
 		while(flag){//!(hive.getGameLost()) ){
-    		//update the hive
+    		//produce the hive
     		//redraw the graphics
 			flag = hive.getGameLost();
         }

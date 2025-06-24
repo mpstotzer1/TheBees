@@ -2,41 +2,37 @@
 //Its output can be controlled by modifiers
 package beehive.job;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import beehive.resource.Resource;
-import beehive.event.EventModifier;
 
-public class DepartmentJob extends Job {
-    protected Resource resource;
-    protected ResourceAdjustStrategy resourceAdjustStrategy;
+public class DepartmentJob extends Modifiable{
+	private Resource resource;
+	private ResourceAdjustStrategy resourceAdjustStrategy;
 
-    public DepartmentJob(Resource resource, ResourceAdjustStrategy resourceAdjustStrategy,
-               double foodCostConstant, double heatCostConstant){
-        this.resource = resource;
-        this.resourceAdjustStrategy = resourceAdjustStrategy;
-        this.foodCostConstant = foodCostConstant;
-        this.heatCostConstant = heatCostConstant;
-    }
+	public DepartmentJob(Resource resource, ResourceAdjustStrategy resourceAdjustStrategy,
+						 double foodCostConstant, double heatConstant, double productionConstant){
+		this.resource = resource;
+		this.resourceAdjustStrategy = resourceAdjustStrategy;
+		modifiers = new Modifiers(foodCostConstant, heatConstant, productionConstant);
+	}
 
-    //Useful Methods
-    public int getFoodCost(int numBees){
-        double multiplier = calcListMultiplier(foodMod);
-        return (int)(numBees * multiplier * foodCostConstant);
-    }
-    public int getHeat(int numBees){
-        double multiplier = calcListMultiplier(heatMod);
-        return (int)(numBees * multiplier * heatCostConstant);
-    }
-    public void produce(int numBees){
-        int production = calcProduction(numBees);
-        resourceAdjustStrategy.execute(this, production);
-    }
-    private int calcProduction(int numBees){
-        double multiplier = calcListMultiplier(prodMod);
-        return (int) (numBees * multiplier);
-    }
+	public void produce(int numBees){
+		int production = calcProduction(numBees);
 
-    public Resource getResource(){ return resource; }
+		resourceAdjustStrategy.execute(resource, production);
+		modifiers.update();
+	}
+	public int calcProduction(int numBees){
+		return (int)(numBees * modifiers.calcProdMultiplier());
+	}
+	public int getFoodCost(int numBees){
+		double multiplier = modifiers.calcFoodMultiplier();
+
+		return (int)(numBees * multiplier);
+	}
+	public int getHeat(int numBees){
+		double multiplier = modifiers.calcHeatMultiplier();
+
+		return (int)(numBees * multiplier);
+	}
+
 }
