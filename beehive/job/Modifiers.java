@@ -59,4 +59,9 @@ public class Modifiers {
         EventModifier eventModifier = new EventModifier(duration, modifier);
         modList.add(eventModifier);
     }
+    public void clearAllMods(){
+        prodMod.clear();
+        foodMod.clear();
+        heatMod.clear();
+    }
 }

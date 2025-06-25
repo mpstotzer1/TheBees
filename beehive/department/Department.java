@@ -46,4 +46,7 @@ public class Department {
 	}
 	public void addBees(int n){ numBees += n; }
 	public void subBees(int n){ numBees -= n; }
+	public void killAllBees(){
+		numBees = 0;
+	}
 }

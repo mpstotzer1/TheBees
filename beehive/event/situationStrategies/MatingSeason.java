@@ -10,6 +10,6 @@ public class MatingSeason implements Strategy{
         hive.getJobInfo().getDroneXP().addHeatMod(duration, 2.0);
     }
     public void doContinuous(Hive hive){
-        hive.getAbstractResources().getXp().addPercent(1.0);
+        hive.getResources().xp().addPercent(1.0);
     }
 }

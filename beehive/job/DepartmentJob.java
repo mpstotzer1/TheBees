@@ -34,5 +34,4 @@ public class DepartmentJob extends Modifiable{
 
 		return (int)(numBees * multiplier);
 	}
-
 }

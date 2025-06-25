@@ -4,7 +4,7 @@ import java.util.Random;
 
 public class Season{
     private SeasonType seasonType;
-    private double seasonLength;
+    private int seasonLength;
     private double currentTemp;
 
     public Season(){
@@ -41,21 +41,27 @@ public class Season{
         else{ return -1.0; }
     }
     private double calcAverageTemp(){
-        return seasonType.getHighTemp() + seasonType.getLowTemp() / 2.0;
+        return (seasonType.getHighTemp() + seasonType.getLowTemp()) / 2.0;
     }
     private void moveToNextSeason(){
         switch(seasonType){
             case SPRING:
-                seasonType = SeasonType.SUMMER;
+                this.seasonType = SeasonType.SUMMER;
+                return;
             case SUMMER:
                 seasonType = SeasonType.FALL;
+                return;
             case FALL:
                 seasonType = SeasonType.WINTER;
+                return;
             case WINTER:
                 seasonType = SeasonType.SPRING;
+                return;
         }
     }
 
     public SeasonType getSeasonType(){ return seasonType; }
+    public void setSeasonType(SeasonType seasonType){ this.seasonType = seasonType; }
     public double getCurrentTemp() { return currentTemp; }
+    public int getDuration(){ return seasonLength; }
 }

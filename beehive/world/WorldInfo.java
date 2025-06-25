@@ -7,6 +7,7 @@ public class WorldInfo {
 
     public WorldInfo(Season season){
         this.season = season;
+        this.weather = new Weather();
     }
 
     public void update(){

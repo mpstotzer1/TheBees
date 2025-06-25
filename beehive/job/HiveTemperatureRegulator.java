@@ -52,8 +52,12 @@ public class HiveTemperatureRegulator extends Modifiable{
     private double clampToStep(double tempChange) {
         double step = hive.getTemperatureInfo().getTempRegulationStep();
 
-        if(tempChange > step){ return step; }
-        return tempChange;
+        if(Math.abs(tempChange) < step){
+            return tempChange;
+        }else{
+            if(tempChange < 0){ return step * -1; }
+            else{ return step; }
+        }
     }
     private int calcTempRegulationFoodCost(double tempAdjustment){
         double foodCost = tempAdjustment * modifiers.calcFoodMultiplier();

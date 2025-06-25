@@ -1,13 +1,12 @@
-package beehive;
+package beehive.hivestate;
 
 //Consider: use for service locator?
 
+import beehive.Hive;
 import beehive.department.Department;
 import beehive.event.Situation;
 import beehive.job.Modifiable;
-import beehive.resource.PotentResource;
 import beehive.resource.Resource;
-import beehive.resource.Resources;
 import beehive.world.SeasonType;
 
 import java.util.ArrayList;
@@ -15,11 +14,6 @@ import java.util.Random;
 
 public class ActiveHive implements HiveState{
     private Hive hive;
-
-
-    public void display(){
-        //code here
-    }
 
     public void update(Hive myHive){
         this.hive = myHive;
@@ -32,10 +26,10 @@ public class ActiveHive implements HiveState{
 
 
         if(hive.getWorldInfo().getSeason().getSeasonType() == SeasonType.WINTER){
-            hive.setHiveState(hive.getDormantState());
+            hive.getHiveStateInfo().setHiveState(hive.getHiveStateInfo().getDormantState());
         }
 
-        if(getTotalBees() <= 0){
+        if(hive.getTotalBees() <= 0){
             hive.setGameLost(true);
         }
     }
@@ -56,7 +50,7 @@ public class ActiveHive implements HiveState{
 
             dept.produce();
             hive.getTemperatureInfo().changeHiveTemp(dept.getTotalHeat());
-            subFood(dept.getTotalFoodCost());
+            hive.subFood(dept.getTotalFoodCost());
         }
         //Honey is converted, not produced: it must be managed manually here instead of through a department
         updateHoney();
@@ -113,7 +107,7 @@ public class ActiveHive implements HiveState{
         int lowHygieneLimit = hive.getResourceData().lowHygiene();
 
         if(amountHygiene < lowHygieneLimit){
-            killBees(lowHygieneLimit - amountHygiene);
+            hive.killBees(lowHygieneLimit - amountHygiene);
             //The number of bees killed by this is NOT tested or fine-tuned. Fix this after testing
         }
     }
@@ -129,7 +123,7 @@ public class ActiveHive implements HiveState{
         double currentHiveTemp = hive.getTemperatureInfo().getHiveTemp();
 
         if(currentHiveTemp < 55 || currentHiveTemp > 113){
-            killPercentBees(3.0);
+            hive.killPercentBees(3.0);
         }
     }
     private void addProdModToAllJobs(int duration, double modifier){
@@ -154,13 +148,13 @@ public class ActiveHive implements HiveState{
 
             if(randPredator == 0){//Robber Bees
                 hive.getResources().honey().setAmount(0);
-                killBees(hive.getDepartmentInfo().getGuard().getNumBees());
+                hive.killBees(hive.getDepartmentInfo().getGuard().getNumBees());
             }else if(randPredator == 1){//Wasps--only in summer?
                 hive.getResources().honey().setAmount( (int)(hive.getResources().honey().getAmount() / 2) );
-                killPercentBees(2);
+                hive.killPercentBees(2);
                 hive.getHiveJobInfo().getBeeCreator().addProdMod(40, .5);
             }else if(randPredator == 2){//Hornets
-                killPercentBees(7);
+                hive.killPercentBees(7);
             }else if(randPredator == 3){//Mice--only in winter?
                 hive.getResources().wax().subPercent(.10);
                 hive.getResources().honey().subPercent(.10);
@@ -176,7 +170,7 @@ public class ActiveHive implements HiveState{
     }
     private int calcChanceAttacked(){
         //chanceAttacked is a linear equation; more strength and higher guardBees-to-totalBees = less chance of attack
-        double percentGuard = hive.getDepartmentInfo().getGuard().getNumBees() / getTotalBees();
+        double percentGuard = hive.getDepartmentInfo().getGuard().getNumBees() / hive.getTotalBees();
         int amountStrength = hive.getResources().strength().getAmount();
         double strengthMult = hive.getUpgrades().get("strengthMult");
 
@@ -218,64 +212,6 @@ public class ActiveHive implements HiveState{
     private void updateSituations(){
         for(Situation situation: hive.getSituationData().getCurrentSituations()){
             situation.update(hive);
-        }
-    }
-
-
-    //Some Helpful Methods
-    public void killBees(int beesToKill){
-        int total = getTotalBees();
-        double percent = 0;
-        for(int i = 0; i < hive.getDepartmentInfo().getDepartments().size(); i++){
-            percent = hive.getDepartmentInfo().getDepartments().get(i).getNumBees() / (double)total;
-            hive.getDepartmentInfo().getDepartments().get(i).subBees((int)(percent * beesToKill));
-        }
-        //If you're out of bees, your hive is dead and you lose the game (womp womp womp)
-    }
-    public void killPercentBees(double percentToKill){
-        int total = getTotalBees();
-        int beesToKill = (int) (total * .01 * percentToKill);
-
-        for(int i = 0; i < hive.getDepartmentInfo().getDepartments().size(); i++){
-            double percent = hive.getDepartmentInfo().getDepartments().get(i).getNumBees() / (double)total;
-            hive.getDepartmentInfo().getDepartments().get(i).subBees((int)(percent * beesToKill));
-        }
-        //If you're out of bees, your hive is dead and you lose the game (womp womp womp)
-    }
-    public int getTotalBees(){
-        int total = 0;
-        for(int i = 0; i < hive.getDepartmentInfo().getDepartments().size(); i++){
-            total += hive.getDepartmentInfo().getDepartments().get(i).getNumBees();
-        }
-        return total;
-    }
-    public void subFood(int initialFoodCost){
-        //subFood() refactored using Google Gemini
-        PotentResource nectar = hive.getResources().nectar();
-        PotentResource honey = hive.getResources().honey();
-        int remainingDeficit = initialFoodCost;
-
-        remainingDeficit = attemptDrainResource(nectar, remainingDeficit);
-        remainingDeficit = attemptDrainResource(honey, remainingDeficit);
-
-        if(remainingDeficit > 0){
-            int beesToKill = (int)(remainingDeficit * hive.getUpgrades().get("starvationMult"));
-            killBees(beesToKill);
-            // Do NOT throw starvation warning here!
-        }
-    }
-    private int attemptDrainResource(PotentResource resource, int currentDeficit){
-        //attemptDrainResource() created using Google Gemini
-        if(currentDeficit <= 0){ return 0; }
-
-        int resourceFoodValue = resource.getFoodValue();
-
-        if(currentDeficit <= resourceFoodValue){
-            resource.sub(currentDeficit / resource.getPotency());
-            return 0;
-        }else{
-            resource.setAmount(0);
-            return (currentDeficit - resourceFoodValue);
         }
     }
 }

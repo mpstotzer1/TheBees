@@ -5,7 +5,6 @@ import beehive.temperature.TemperatureRegulationRanges;
 
 public class BeeCreator extends Modifiable{
     private Hive hive;
-    //private Modifiers modifiers;
 
     public BeeCreator(double foodCostConstant, double heatConstant, double productionConstant) {
         modifiers = new Modifiers(foodCostConstant, heatConstant, productionConstant);
@@ -19,7 +18,8 @@ public class BeeCreator extends Modifiable{
     }
     private void updateNursery(){
         if(insideBroodTempRange()){
-            hive.addBeesToCluster(calcNumBeesToAdd());
+            hive.addBeesEverywhere(calcNumBeesToAdd()); //DEBUG
+            //hive.addBeesToCluster(calcNumBeesToAdd());  DEBUG
             hive.getTemperatureInfo().changeHiveTemp(calcHeat());
             hive.getResources().pollen().setAmount(0);
         }
@@ -42,5 +42,13 @@ public class BeeCreator extends Modifiable{
         double heatMod = modifiers.calcHeatMultiplier();
 
         return beesProduced * heatMod;
+    }
+
+    //DEBUG
+    public int calcNumBeesToAddDebug(Hive hive, int pollen){
+        //int pollen = hive.getResources().pollen().getAmount();
+        double multiplier = modifiers.calcProdMultiplier();
+
+        return (int)(pollen * multiplier);
     }
 }

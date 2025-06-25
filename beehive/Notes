@@ -6,9 +6,9 @@ NOTE:   Time is governed by "ticks" of a clock (1 tick = 1/2 second)
 
 
 TO DO:
+        -Create Double Buffered hive
         -Get upgrades figured out, get constants figured out
         -Figure out how to throw warnings to the player
-		-Figure out winter
 		-Eventually figure out the proper decimal number for heatTempConst
 
 

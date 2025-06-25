@@ -3,7 +3,7 @@ package beehive.job;
 public abstract class Modifiable{
     protected Modifiers modifiers;
 
-    protected final Modifiers getModifiers(){
+    public final Modifiers getModifiers(){
         return modifiers;
     };
     public void addProdMod(int duration, double modifier){
