@@ -14,15 +14,17 @@ public class Runner{
 
 		int debugCounter = 0;
 
-		while(!(hive.getGameLost()) && debugCounter <= 360 ){
-			display1(hive);
+		while(!(hive.getGameLost()) && debugCounter < 360 ){
+			display2(hive);
 			hive.update();
+
+			Logger.log("-------------Hive updated-------------");
 
 			TimeUnit.MILLISECONDS.sleep(10);
 			debugCounter++;
-			System.out.println("Number of Ticks: " + debugCounter);
 		}
-    }
+		System.out.println("Number of Ticks: " + debugCounter);
+	}
 
 	public static void display1(Hive hive){
 		System.out.println("-----------------------------------------------------------");
@@ -59,7 +61,7 @@ public class Runner{
 		System.out.println("Hygiene to be Produced: " + hive.getJobInfo().getHouseBeeHygiene().calcProduction(hive.getDepartmentInfo().getHouseBee().getNumBees()));
 		System.out.println("Queen Health to be Produced: " + hive.getJobInfo().getNurseQueenHealth().calcProduction(hive.getDepartmentInfo().getNurse().getNumBees()));
 		System.out.println("Strength to be Produced: " + hive.getJobInfo().getGuardStrength().calcProduction(hive.getDepartmentInfo().getGuard().getNumBees()));
-		System.out.println("Bees to be Produced: " + hive.getHiveJobInfo().getBeeCreator().calcNumBeesToAddDebug(hive, hive.getJobInfo().getForagerPollen().calcProduction(hive.getDepartmentInfo().getForager().getNumBees())));
+		//System.out.println("Bees to be Produced: " + hive.getHiveJobInfo().getBeeCreator().calcNumBeesToAddDebug());
 
 		System.out.println("------------Food Costs------------");
 		int deptFoodCost = 0;
@@ -82,6 +84,6 @@ public class Runner{
 		System.out.println("-----------------------------------------------------------");
 	}
 	public static void display2(Hive hive){
-		System.out.print("Total Bees: " + hive.getTotalBees() + "\t");
+		System.out.println("Total Bees: " + hive.getTotalBees() + "\t");
 	}
 }

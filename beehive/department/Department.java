@@ -41,11 +41,16 @@ public class Department {
 
 	public int getNumBees(){ return numBees; }
 	public void transferAllBees(Department department){
-		department.addBees(numBees);
+		department.adjustBees(numBees);
 		numBees = 0;
 	}
-	public void addBees(int n){ numBees += n; }
-	public void subBees(int n){ numBees -= n; }
+	public void adjustBees(int n){
+		if((numBees + n) < 0){
+			numBees = 0;
+		}else{
+			numBees += n;
+		}
+	}
 	public void killAllBees(){
 		numBees = 0;
 	}

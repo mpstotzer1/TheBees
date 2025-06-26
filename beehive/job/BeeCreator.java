@@ -1,6 +1,7 @@
 package beehive.job;
 
 import beehive.Hive;
+import beehive.Logger;
 import beehive.temperature.TemperatureRegulationRanges;
 
 public class BeeCreator extends Modifiable{
@@ -18,8 +19,10 @@ public class BeeCreator extends Modifiable{
     }
     private void updateNursery(){
         if(insideBroodTempRange()){
-            hive.addBeesEverywhere(calcNumBeesToAdd()); //DEBUG
+            hive.adjustBeesEverywhere(calcNumBeesToAdd()); //DEBUG
+            Logger.log("Number bees to be produced: " + calcNumBeesToAdd());
             //hive.addBeesToCluster(calcNumBeesToAdd());  DEBUG
+
             hive.getTemperatureInfo().changeHiveTemp(calcHeat());
             hive.getResources().pollen().setAmount(0);
         }
@@ -29,7 +32,10 @@ public class BeeCreator extends Modifiable{
         double minBroodTemp = TemperatureRegulationRanges.BROOD.getMinTemperature();
         double maxBroodTemp = TemperatureRegulationRanges.BROOD.getMaxTemperature();
 
-        return (minBroodTemp <= hiveTemp && hiveTemp <= maxBroodTemp);
+        boolean insideBroodRange = (minBroodTemp <= hiveTemp && hiveTemp <= maxBroodTemp);
+        Logger.log("Inside Brood Range: " + insideBroodRange);
+
+        return insideBroodRange;
     }
     private int calcNumBeesToAdd(){
         int pollen = hive.getResources().pollen().getAmount();
@@ -42,13 +48,5 @@ public class BeeCreator extends Modifiable{
         double heatMod = modifiers.calcHeatMultiplier();
 
         return beesProduced * heatMod;
-    }
-
-    //DEBUG
-    public int calcNumBeesToAddDebug(Hive hive, int pollen){
-        //int pollen = hive.getResources().pollen().getAmount();
-        double multiplier = modifiers.calcProdMultiplier();
-
-        return (int)(pollen * multiplier);
     }
 }

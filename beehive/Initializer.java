@@ -23,9 +23,6 @@ import beehive.department.DepartmentInfo;
 import beehive.event.Situation;
 import beehive.event.SituationData;
 import beehive.event.situationStrategies.*;
-import beehive.hivestate.ActiveHive;
-import beehive.hivestate.HiveState;
-import beehive.hivestate.HiveStateInfo;
 import beehive.job.*;
 import beehive.resource.ResourceData;
 import beehive.resource.Resources;
@@ -50,9 +47,9 @@ public class Initializer{
 		HiveJobInfo hiveJobInfo = initializeHiveJobs();
 		DepartmentInfo departmentInfo = initializeDepartments(jobInfo);
 		SituationData situationData = initializeSituations();
-		HiveStateInfo hiveStateInfo = initializeHiveState();
+		//HiveStateInfo hiveStateInfo = initializeHiveState();
 
-    	Hive hive = new Hive(resources, resourceData, temperatureInfo, worldInfo, departmentInfo, jobInfo, hiveJobInfo, situationData, upgrades, hiveStateInfo);
+    	Hive hive = new Hive(resources, resourceData, temperatureInfo, worldInfo, departmentInfo, jobInfo, hiveJobInfo, situationData, upgrades);
 
 		for(Department dept: departmentInfo.getDepartments()){
 			hive.addBeesToDepartment(50, dept);
@@ -61,11 +58,11 @@ public class Initializer{
     	return hive;
     }
 
-	private HiveStateInfo initializeHiveState() {
-		HiveStateInfo temp = new HiveStateInfo();
-
-		return temp;
-	}
+//	private HiveStateInfo initializeHiveState() {
+//		HiveStateInfo temp = new HiveStateInfo();
+//
+//		return temp;
+//	}
 	private ResourceData initializeResourceData() {
 		ResourceData temp = new ResourceData(20, 20);
 
@@ -98,7 +95,7 @@ public class Initializer{
 		ResourceSetStrategy resourceSetStrategy = new ResourceSetStrategy();
 		ResourceNullStrategy resourceNullStrategy = new ResourceNullStrategy();
 
-		DepartmentJob foragerNectar = new DepartmentJob(resources.nectar(), resourceAddStrategy, 0.5, .03, 2.0);
+		DepartmentJob foragerNectar = new DepartmentJob(resources.nectar(), resourceAddStrategy, 0.5, .03, 1.0);
 		DepartmentJob foragerPollen = new DepartmentJob(resources.pollen(), resourceAddStrategy, 0.5, .03, .15);
 		DepartmentJob waxMasonWax = new DepartmentJob(resources.wax(), resourceAddStrategy, 0.5, .03, .5);
 		DepartmentJob droneXP = new DepartmentJob(resources.xp(), resourceAddStrategy, 0.5, .03, .35);

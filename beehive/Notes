@@ -6,7 +6,7 @@ NOTE:   Time is governed by "ticks" of a clock (1 tick = 1/2 second)
 
 
 TO DO:
-        -Create Double Buffered hive
+        -Refactor winter
         -Get upgrades figured out, get constants figured out
         -Figure out how to throw warnings to the player
 		-Eventually figure out the proper decimal number for heatTempConst
@@ -19,6 +19,10 @@ CONSIDERATIONS:
 	-Hard code the default department for worker and drone Batches?
 	-Change Hive's "cluster" department to "beard" department? (depending on how winter clustering works)
 	-Maybe add a mechanic for maximum honey, etc. capacity that needs to be upgraded with wax?
+
+
+Fragilities:
+    -value for winterFoodCost (in updateWinter() in Hive) is hardcoded into the source code
 
 
 LEFT OFF AT:
