@@ -25,7 +25,7 @@ public class UpgradeInfo {
 	private int droneCountdown;//hatching time for done
 	private int workerCountdown;//hatching time for worker
 	private int canMakeQueen;//ability to make queens
-	private float strengthMult;//adjusts how much strength the guards produce
+	private float strengthMult;//adjusts how much strength the guards work
 	private float flowerMult;//adjusts forager production (more flowers = better)
 	private float starvationMult;
 	private int queenCost;

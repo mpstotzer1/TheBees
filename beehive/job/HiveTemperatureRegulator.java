@@ -2,22 +2,16 @@ package beehive.job;
 
 import beehive.Hive;
 
-public class HiveTemperatureRegulator extends Modifiable{
+public class HiveTemperatureRegulator extends Job{
     private Hive hive;
 
-    public HiveTemperatureRegulator(double foodCostConstant, double heatConstant, double productionConstant){
+    public HiveTemperatureRegulator(Hive hive, double foodCostConstant, double heatConstant, double productionConstant){
+        this.hive = hive;
         modifiers = new Modifiers(foodCostConstant, heatConstant, productionConstant);
     }
 
-    public void update(Hive hive){
-        this.hive = hive;
-
-        regulateHiveTemperature();
-        modifiers.update();
-    }
-    //helper functions
-    private void regulateHiveTemperature(){
-        double tempAdjustment = calcTempAdjustment() * modifiers.calcProdMultiplier();
+    protected void workOverride(){
+        double tempAdjustment = calcTempAdjustment();
         hive.getTemperatureInfo().changeHiveTemp(tempAdjustment);
 
         int foodCost = calcTempRegulationFoodCost(tempAdjustment);
@@ -60,9 +54,20 @@ public class HiveTemperatureRegulator extends Modifiable{
         }
     }
     private int calcTempRegulationFoodCost(double tempAdjustment){
-        double foodCost = tempAdjustment * modifiers.calcFoodMultiplier();
+        double foodCost = Math.abs(tempAdjustment) / modifiers.calcFoodMultiplier();
         foodCost /= hive.getUpgrades().get("insulation");
 
         return (int)(foodCost);
+    }
+
+    public int calcFoodCost(){
+        double tempAdjustment = calcTempAdjustment();
+
+        return calcTempRegulationFoodCost(tempAdjustment);
+    }
+    public double calcHeat(){
+        double heatMod = modifiers.calcHeatMultiplier();
+
+        return calcTempAdjustment() * heatMod;
     }
 }

@@ -1,7 +1,7 @@
 //The Initializer creates a Hive
  /* 	I want the Controller to create an instance of Hive and then instantiate all its variables i.e. make
  * a functioning Hive object. It should essentially keep the Hive in a loop that updates it constantly
- * and doesn't break until the player wins or loses. Every time it calls the Hive.produce() function, it should
+ * and doesn't break until the player wins or loses. Every time it calls the Hive.work() function, it should
  * redraw the graphics afterwards. This will come much later.
  * 		It should also manage the upgrades for the Hivemind, probably with a hashmap. Those
  * values will be used to instantiate the Hive object.
@@ -47,9 +47,9 @@ public class Initializer{
 		HiveJobInfo hiveJobInfo = initializeHiveJobs();
 		DepartmentInfo departmentInfo = initializeDepartments(jobInfo);
 		SituationData situationData = initializeSituations();
-		//HiveStateInfo hiveStateInfo = initializeHiveState();
+		MiscData miscData = initializeMiscData();
 
-    	Hive hive = new Hive(resources, resourceData, temperatureInfo, worldInfo, departmentInfo, jobInfo, hiveJobInfo, situationData, upgrades);
+    	Hive hive = new Hive(resources, resourceData, temperatureInfo, worldInfo, departmentInfo, jobInfo, hiveJobInfo, situationData, upgrades, miscData);
 
 		for(Department dept: departmentInfo.getDepartments()){
 			hive.addBeesToDepartment(50, dept);
@@ -196,6 +196,11 @@ public class Initializer{
 		allSituations.add(varroa);
 
 		SituationData temp = new SituationData(allSituations);
+
+		return temp;
+	}
+	private MiscData initializeMiscData(){
+		MiscData temp = new MiscData(15);
 
 		return temp;
 	}

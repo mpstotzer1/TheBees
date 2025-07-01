@@ -6,6 +6,7 @@ NOTE:   Time is governed by "ticks" of a clock (1 tick = 1/2 second)
 
 
 TO DO:
+        -Delete hivestate and all its files
         -Refactor winter
         -Get upgrades figured out, get constants figured out
         -Figure out how to throw warnings to the player
@@ -25,4 +26,6 @@ Fragilities:
     -value for winterFoodCost (in updateWinter() in Hive) is hardcoded into the source code
 
 
-LEFT OFF AT:
+LEFT OFF AT: Refactoring jobs and departments (again!)
+                Hive.java updateJobs()
+                    figure out proper order for heat, foodCost, and production

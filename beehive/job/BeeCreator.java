@@ -4,27 +4,23 @@ import beehive.Hive;
 import beehive.Logger;
 import beehive.temperature.TemperatureRegulationRanges;
 
-public class BeeCreator extends Modifiable{
+public class BeeCreator extends Job{
     private Hive hive;
 
-    public BeeCreator(double foodCostConstant, double heatConstant, double productionConstant) {
+    public BeeCreator(Hive hive, double foodCostConstant, double heatConstant, double productionConstant) {
+        this.hive = hive;
         modifiers = new Modifiers(foodCostConstant, heatConstant, productionConstant);
     }
 
-    public void update(Hive hive){
-        this.hive = hive;
 
-        updateNursery();
-        modifiers.update();
-    }
-    private void updateNursery(){
+    protected void workOverride(){
         if(insideBroodTempRange()){
             hive.adjustBeesEverywhere(calcNumBeesToAdd()); //DEBUG
+            hive.getResources().pollen().setAmount(0);
             Logger.log("Number bees to be produced: " + calcNumBeesToAdd());
             //hive.addBeesToCluster(calcNumBeesToAdd());  DEBUG
 
             hive.getTemperatureInfo().changeHiveTemp(calcHeat());
-            hive.getResources().pollen().setAmount(0);
         }
     }
     private boolean insideBroodTempRange(){
@@ -41,12 +37,22 @@ public class BeeCreator extends Modifiable{
         int pollen = hive.getResources().pollen().getAmount();
         double multiplier = modifiers.calcProdMultiplier();
 
-        return (int)(pollen * multiplier);
+        double numBees = pollen * multiplier;
+        numBees = Math.clamp(numBees, 0.0, hive.getMiscData().maxNumBeesProducedPerTick());
+
+        return (int)(numBees);
     }
-    private double calcHeat(){
+
+    public double calcHeat(){
         int beesProduced = calcNumBeesToAdd();
         double heatMod = modifiers.calcHeatMultiplier();
 
         return beesProduced * heatMod;
+    }
+    public int calcFoodCost(){
+        int beesProduced = calcNumBeesToAdd();
+        double foodMod = modifiers.calcFoodMultiplier();
+
+        return (int)(beesProduced * foodMod);
     }
 }

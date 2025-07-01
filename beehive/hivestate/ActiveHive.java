@@ -49,7 +49,7 @@
 //        for(int i = 0; i < hive.getDepartmentInfo().getDepartments().size(); i++){
 //            Department dept = hive.getDepartmentInfo().getDepartments().get(i);
 //
-//            dept.produce();
+//            dept.work();
 //            hive.getTemperatureInfo().changeHiveTemp(dept.getTotalHeat());
 //            hive.subFood(dept.getTotalFoodCost());
 //        }

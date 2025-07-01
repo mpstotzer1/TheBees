@@ -20,10 +20,10 @@ public class Situation {
             if(!doneOnce){
                 strategy.doOnce(duration, hive);
                 doneOnce = true;
+            }else{
+                strategy.doContinuous(hive);
+                duration--;
             }
-
-            strategy.doContinuous(hive);
-            duration--;
         }
     }
 

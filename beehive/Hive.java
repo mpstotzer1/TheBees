@@ -31,6 +31,7 @@ public class Hive {
 	private HiveJobInfo hiveJobInfo;
 	private SituationData situationData;
 	private HashMap<String, Double> upgrades;
+	private MiscData miscData;
 
 		
 	//A "big-boned" constructor
@@ -42,7 +43,8 @@ public class Hive {
 				JobInfo jobInfo,
 				HiveJobInfo hiveJobInfo,
 				SituationData situationData,
-				HashMap<String, Double> upgrades){
+				HashMap<String, Double> upgrades,
+				MiscData miscData) {
 		this.resources = resources;
 		this.resourceData = resourceData;
 		//Temperature (NOT a resource!)
@@ -54,6 +56,7 @@ public class Hive {
 		this.hiveJobInfo = hiveJobInfo;
 		this.situationData = situationData;
 		this.upgrades = upgrades;
+		this.miscData = miscData;
 	}
 	
 
@@ -136,6 +139,16 @@ public class Hive {
 		deltaTemp *= .1;
 		return deltaTemp;
 	}
+
+
+	private void updateJobs(){
+		int foodCost = 0;
+		double tempChange = 0;
+
+		//for Job job: hive.getJobs()
+		//
+	}
+
 
 	private void updateDepartmentJobs(){
 		int foodCost = 0;
@@ -337,7 +350,7 @@ public class Hive {
 //		for(int i = 0; i < departmentInfo.getDepartments().size(); i++){
 //			Department dept = departmentInfo.getDepartments().get(i);
 //
-//			dept.produce();
+//			dept.work();
 //			temperatureInfo.changeHiveTemp(dept.getTotalHeat());
 //			subFood(dept.getTotalFoodCost());
 //		}
@@ -600,5 +613,5 @@ public class Hive {
 
 		return allJobs;
 	}
-
+	public MiscData getMiscData(){ return miscData; }
 }

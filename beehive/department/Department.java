@@ -19,7 +19,7 @@ public class Department {
 
 	public void produce(){
 		for(int i = 0; i < departmentJobs.size(); i++){
-			departmentJobs.get(i).produce(numBees);
+			departmentJobs.get(i).work(numBees);
 		}
 	}
 	public int getTotalFoodCost(){
