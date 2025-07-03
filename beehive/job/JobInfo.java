@@ -2,6 +2,8 @@
 //Job nomenclature: "department" + "ResourceInfluenced"
 package beehive.job;
 
+import beehive.Hive;
+
 import java.util.ArrayList;
 
 public class JobInfo {
@@ -17,13 +19,18 @@ public class JobInfo {
 	//Null jobs
 	private DepartmentJob fannerHoney;
 	private DepartmentJob clusterIdle;
-	//The usual list of jobs
-    private ArrayList<DepartmentJob> departmentJobs = new ArrayList<DepartmentJob>();
+	//Hive jobs
+	private BeeCreator beeCreator;
+	private HiveTemperatureRegulator hiveTemperatureRegulator;
+	//List of jobs
+    private ArrayList<DepartmentJob> departmentJobs = new ArrayList<>();
+	private ArrayList<Job> allJobs = new ArrayList<>();
 	
     //The constructor
     public JobInfo(DepartmentJob foragerNectar, DepartmentJob foragerPollen, DepartmentJob droneXP, DepartmentJob waxMasonWax,
 				   DepartmentJob guardStrength, DepartmentJob nurseQueenHealth, DepartmentJob houseBeeHygiene,
-				   DepartmentJob fannerHoney, DepartmentJob clusterIdle){
+				   DepartmentJob fannerHoney, DepartmentJob clusterIdle,
+				   BeeCreator beeCreator, HiveTemperatureRegulator hiveTemperatureRegulator){
 		this.foragerNectar = foragerNectar;
 		this.foragerPollen = foragerPollen;
 		this.droneXP = droneXP;
@@ -33,6 +40,8 @@ public class JobInfo {
 		this.houseBeeHygiene = houseBeeHygiene;
 		this.fannerHoney = fannerHoney;
 		this.clusterIdle = clusterIdle;
+		this.beeCreator = beeCreator;
+		this. hiveTemperatureRegulator = hiveTemperatureRegulator;
 
 		this.departmentJobs.add(foragerNectar);
 		this.departmentJobs.add(foragerPollen);
@@ -43,27 +52,24 @@ public class JobInfo {
 		this.departmentJobs.add(houseBeeHygiene);
 		this.departmentJobs.add(fannerHoney);
 		this.departmentJobs.add(clusterIdle);
+
+		allJobs.addAll(departmentJobs);
+		allJobs.add(beeCreator);
+		allJobs.add(hiveTemperatureRegulator);
 	}
 	
 	//Getters and Setters
 	public DepartmentJob getNurseQueenHealth() { return nurseQueenHealth; }
-	//public void setNurseQueenHealth(Job nurseQueenHealth) { this.nurseQueenHealth = nurseQueenHealth; }
 	public DepartmentJob getForagerNectar() { return foragerNectar; }
-	//public void setForagerNectar(Job foragerNectar) { this.foragerNectar = foragerNectar; }
 	public DepartmentJob getForagerPollen() { return foragerPollen; }
-	//public void setForagerPollen(Job foragerPollen) { this.foragerPollen = foragerPollen; } // typo assumed to be foragerConst
 	public DepartmentJob getGuardStrength() { return guardStrength; }
-	//public void setGuardStrength(Job guardStrength) { this.guardStrength = guardStrength; }
 	public DepartmentJob getWaxMasonWax() { return waxMasonWax; }
-	//public void setWaxMasonWax(Job waxMasonWax) { this.waxMasonWax = waxMasonWax; }
 	public DepartmentJob getHouseBeeHygiene() { return houseBeeHygiene; }
-	//public void setHouseBeeHygiene(Job houseBeeHygiene) { this.houseBeeHygiene = houseBeeHygiene; }
 	public DepartmentJob getFannerHoney() { return fannerHoney; }
-	//public void setFannerHoney(Job fannerHoney) { this.fannerHoney = fannerHoney; }
 	public DepartmentJob getDroneXP() { return droneXP; }
-	//public void setDroneXP(Job droneXP) { this.droneXP = droneXP; }
 	public DepartmentJob getClusterIdle() { return clusterIdle; }
-	//public void setClusterIdle(Job clusterIdle) { this.clusterIdle = clusterIdle; }
-	public ArrayList<DepartmentJob> getJobs() { return departmentJobs; }
-	//public void setJobs(List<Job> jobs) { this.jobs = jobs; }
+	public BeeCreator getBeeCreator() { return beeCreator; }
+	public HiveTemperatureRegulator getHiveTemperatureRegulator() { return hiveTemperatureRegulator; }
+	public ArrayList<DepartmentJob> getDepartmentJobs() { return departmentJobs; }
+	public ArrayList<Job> getAllJobs() {return allJobs; }
 }

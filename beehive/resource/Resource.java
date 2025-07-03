@@ -12,12 +12,16 @@ public class Resource {
 	
 	//Useful Methods
 	public void add(int a){ amount += a; }
-	public void sub(int a){ amount -= a; }
-	public void addPercent(double p){ amount += amount*p; }
-	public void subPercent(double p){ amount -= amount*p; }
+	public void sub(int a){
+		amount -= a;
+		if(amount < 0){ amount = 0; }
+	}
+	public void addPercent(double p){ amount += amount * p; }
+	public void subPercent(double p){
+		amount -= amount * p;
+		if(amount < 0){ amount = 0; }
+	}
 	
-	//Getters
 	public int getAmount(){ return amount; }
-	//Setters
 	public void setAmount(int a){ amount = a; }
 }

@@ -6,7 +6,7 @@ public class ColdSnap implements Strategy{
 
     public void doOnce(int duration, Hive hive){
         hive.getJobInfo().getFannerHoney().addProdMod(duration,.65);
-        hive.getHiveJobInfo().getBeeCreator().addProdMod(duration, .85);
+        hive.getJobInfo().getBeeCreator().addProdMod(duration, .85);
         hive.getJobInfo().getGuardStrength().addProdMod(duration, .85);
     }
     public void doContinuous(Hive hive){

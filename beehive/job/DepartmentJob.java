@@ -1,5 +1,3 @@
-//A job produces EXACTLY one RESOURCE, generates a FOODCOST, and generates HEAT
-//Its output can be controlled by modifiers
 package beehive.job;
 
 import beehive.department.Department;
@@ -23,7 +21,7 @@ public class DepartmentJob extends Job{
 
 		resourceAdjustStrategy.execute(resource, amountResourceProduced);
 	}
-	private int calcProduction(){
+	public int calcProduction(){
 		return (int)(department.getNumBees() * modifiers.calcProdMultiplier());
 	}
 	public int calcFoodCost(){

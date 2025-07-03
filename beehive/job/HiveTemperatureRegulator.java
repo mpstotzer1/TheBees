@@ -1,21 +1,22 @@
 package beehive.job;
 
-import beehive.Hive;
+import beehive.temperature.TemperatureInfo;
+
+import java.util.HashMap;
 
 public class HiveTemperatureRegulator extends Job{
-    private Hive hive;
+    private TemperatureInfo temperatureInfo;
+    private HashMap<String, Double> upgrades;
 
-    public HiveTemperatureRegulator(Hive hive, double foodCostConstant, double heatConstant, double productionConstant){
-        this.hive = hive;
+    public HiveTemperatureRegulator(TemperatureInfo temperatureInfo, HashMap<String, Double> upgrades, double foodCostConstant, double heatConstant, double productionConstant){
+        this.temperatureInfo = temperatureInfo;
+        this.upgrades = upgrades;
         modifiers = new Modifiers(foodCostConstant, heatConstant, productionConstant);
     }
 
     protected void workOverride(){
         double tempAdjustment = calcTempAdjustment();
-        hive.getTemperatureInfo().changeHiveTemp(tempAdjustment);
-
-        int foodCost = calcTempRegulationFoodCost(tempAdjustment);
-        hive.subFood(foodCost);
+        temperatureInfo.changeHiveTemp(tempAdjustment);
     }
     private double calcTempAdjustment(){
         if(hiveTooHot()){
@@ -26,25 +27,25 @@ public class HiveTemperatureRegulator extends Job{
         return 0;
     }
     private boolean hiveTooHot(){
-        return (hive.getTemperatureInfo().getHiveTemp() > hive.getTemperatureInfo().getTemperatureRegulationRanges().getMaxTemperature());
+        return (temperatureInfo.getHiveTemp() > temperatureInfo.getTemperatureRegulationRanges().getMaxTemperature());
     }
     private boolean hiveTooCold(){
-        return (hive.getTemperatureInfo().getHiveTemp() < hive.getTemperatureInfo().getTemperatureRegulationRanges().getMinTemperature());
+        return (temperatureInfo.getHiveTemp() < temperatureInfo.getTemperatureRegulationRanges().getMinTemperature());
     }
     private double maxMinusHive(){
-        double maxTemp = hive.getTemperatureInfo().getTemperatureRegulationRanges().getMaxTemperature();
-        double currentHiveTemp = hive.getTemperatureInfo().getHiveTemp();
+        double maxTemp = temperatureInfo.getTemperatureRegulationRanges().getMaxTemperature();
+        double currentHiveTemp = temperatureInfo.getHiveTemp();
 
         return (maxTemp - currentHiveTemp);
     }
     private double minMinusHive(){
-        double minTemp = hive.getTemperatureInfo().getTemperatureRegulationRanges().getMinTemperature();
-        double currentHiveTemp = hive.getTemperatureInfo().getHiveTemp();
+        double minTemp = temperatureInfo.getTemperatureRegulationRanges().getMinTemperature();
+        double currentHiveTemp = temperatureInfo.getHiveTemp();
 
         return (minTemp - currentHiveTemp);
     }
     private double clampToStep(double tempChange) {
-        double step = hive.getTemperatureInfo().getTempRegulationStep();
+        double step = temperatureInfo.getTempRegulationStep();
 
         if(Math.abs(tempChange) < step){
             return tempChange;
@@ -53,18 +54,16 @@ public class HiveTemperatureRegulator extends Job{
             else{ return step; }
         }
     }
-    private int calcTempRegulationFoodCost(double tempAdjustment){
-        double foodCost = Math.abs(tempAdjustment) / modifiers.calcFoodMultiplier();
-        foodCost /= hive.getUpgrades().get("insulation");
+
+    public int calcFoodCost(){
+        double tempAdjustmentAbsolute = Math.abs(calcTempAdjustment());
+
+        double foodCost = tempAdjustmentAbsolute / modifiers.calcFoodMultiplier();
+        foodCost /= upgrades.get("insulation");
 
         return (int)(foodCost);
     }
 
-    public int calcFoodCost(){
-        double tempAdjustment = calcTempAdjustment();
-
-        return calcTempRegulationFoodCost(tempAdjustment);
-    }
     public double calcHeat(){
         double heatMod = modifiers.calcHeatMultiplier();
 

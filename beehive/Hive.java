@@ -8,8 +8,7 @@ import beehive.department.Department;
 import beehive.department.DepartmentInfo;
 import beehive.event.Situation;
 import beehive.event.SituationData;
-import beehive.job.HiveJobInfo;
-import beehive.job.Modifiable;
+import beehive.job.Job;
 import beehive.job.JobInfo;
 import beehive.resource.ResourceData;
 import beehive.resource.Resources;
@@ -23,12 +22,11 @@ import beehive.world.SeasonType;
 public class Hive {
 	private boolean gameLost = false;
 	private Resources resources;
-	ResourceData resourceData;
+	private ResourceData resourceData;
 	private TemperatureInfo temperatureInfo;
 	private WorldInfo worldInfo;
 	private DepartmentInfo departmentInfo;
 	private JobInfo jobInfo;
-	private HiveJobInfo hiveJobInfo;
 	private SituationData situationData;
 	private HashMap<String, Double> upgrades;
 	private MiscData miscData;
@@ -41,7 +39,6 @@ public class Hive {
 				WorldInfo worldInfo,
 				DepartmentInfo departmentInfo,
 				JobInfo jobInfo,
-				HiveJobInfo hiveJobInfo,
 				SituationData situationData,
 				HashMap<String, Double> upgrades,
 				MiscData miscData) {
@@ -53,7 +50,6 @@ public class Hive {
 		this.departmentInfo = departmentInfo;
 		//Your Jobs (nomenclature: departmentResourceInfluenced)
 		this.jobInfo = jobInfo;
-		this.hiveJobInfo = hiveJobInfo;
 		this.situationData = situationData;
 		this.upgrades = upgrades;
 		this.miscData = miscData;
@@ -78,50 +74,49 @@ public class Hive {
 
 	private void updateWinter() {
 
-		//Speed up time (10-15x speed?)
-		//Should have an on-track-to-survive-winter flag for the player the rest of the year
-
-		//Kill all the drones
-		getDepartmentInfo().getDrone().killAllBees();
-		//Don't clusterAllBees! Leave them "bee" and winter update, then if survived, all bees are back in their places
-		//Empty situationData.getCurrentSituations()
-		getSituationData().getCurrentSituations().clear();
-		//Clear all modifiers
-		for(Modifiable job: getAllJobs()){
-			job.getModifiers().clearAllMods();
-		}
-		//Essentially give the beehive a clean slate
-
-		//Update method for winter
-		//No events happen!
-		//World, hive temperatures irrelevant
-		//Drain all resources for seasonLength accordingly
-		int durationWinter = getWorldInfo().getSeason().getDuration();
-		//calculate foodCost of wintering hive (just be totalBees * someSmallConstant)
-		double winterFoodCostCnst = 1.0;
-		int foodCost = (int)(getTotalBees() * winterFoodCostCnst);
-
-		//subFood() for each tick
-		subFood(foodCost);
-
-		durationWinter--;
-
-		//Change state to Active and season to SPRING
-		if(durationWinter <= 0){
-			getWorldInfo().getSeason().setSeasonType(SeasonType.SPRING);
-		}
-
-
-		if(getTotalBees() <= 0){
-			setGameLost(true);
-		}
+//		//Speed up time (10-15x speed?)
+//		//Should have an on-track-to-survive-winter flag for the player the rest of the year
+//
+//		//Kill all the drones
+//		getDepartmentInfo().getDrone().killAllBees();
+//		//Don't clusterAllBees! Leave them "bee" and winter update, then if survived, all bees are back in their places
+//		//Empty situationData.getCurrentSituations()
+//		getSituationData().getCurrentSituations().clear();
+//		//Clear all modifiers
+//		for(Modifiable job: getAllJobs()){
+//			job.getModifiers().clearAllMods();
+//		}
+//		//Essentially give the beehive a clean slate
+//
+//		//Update method for winter
+//		//No events happen!
+//		//World, hive temperatures irrelevant
+//		//Drain all resources for seasonLength accordingly
+//		int durationWinter = getWorldInfo().getSeason().getDuration();
+//		//calculate foodCost of wintering hive (just be totalBees * someSmallConstant)
+//		double winterFoodCostCnst = 1.0;
+//		int foodCost = (int)(getTotalBees() * winterFoodCostCnst);
+//
+//		//subFood() for each tick
+//		subFood(foodCost);
+//
+//		durationWinter--;
+//
+//		//Change state to Active and season to SPRING
+//		if(durationWinter <= 0){
+//			getWorldInfo().getSeason().setSeasonType(SeasonType.SPRING);
+//		}
+//
+//
+//		if(getTotalBees() <= 0){
+//			setGameLost(true);
+//		}
 	}
 
 
 	public void updateSummer(){
 		updateWorld();
-		updateDepartmentJobs();
-		updateHiveJobs();
+		updateJobs();
 		updateOccurrences();
 		//Maybe throw warnings/memos?
 
@@ -140,57 +135,66 @@ public class Hive {
 		return deltaTemp;
 	}
 
-
 	private void updateJobs(){
 		int foodCost = 0;
-		double tempChange = 0;
+		double heatGenerated = 0;
 
-		//for Job job: hive.getJobs()
-		//
-	}
+		//The order of work, heat generation, and food subtraction matters!
+		for(Job job: jobInfo.getDepartmentJobs()){ job.work(); }
+		jobInfo.getBeeCreator().work();
 
+		for(Job job: jobInfo.getAllJobs()){ heatGenerated += job.calcHeat(); }
+		temperatureInfo.changeHiveTemp(heatGenerated);
 
-	private void updateDepartmentJobs(){
-		int foodCost = 0;
-		double tempChange = 0;
-
-		for(Department dept: getDepartmentInfo().getDepartments()){
-			dept.produce();
-			tempChange += dept.getTotalHeat();
-			foodCost += dept.getTotalFoodCost();
-		}
-		//Sum foodCost and tempChange handled outside loop so that the order of departments doesn't matter
-		getTemperatureInfo().changeHiveTemp(tempChange);
+		for(Job job: jobInfo.getAllJobs()){ foodCost += job.calcFoodCost(); }
 		subFood(foodCost);
 
-		//Honey is converted, not produced: it must be managed manually here instead of through a department
+		jobInfo.getHiveTemperatureRegulator().work();
+
 		updateHoney();
 	}
-	private void updateHoney(){
-		int nectarUsedByFanners = calcFannerProduction();
-		int amountNectar = getResources().nectar().getAmount();
-		Resource honey = getResources().honey();
-		Resource nectar = getResources().nectar();
-		int honeyPotency = getResources().honey().getPotency();
+	private void subFood(int initialFoodCost){
+		//subFood() refactored using Google Gemini
+		PotentResource nectar = resources.nectar();
+		PotentResource honey = resources.honey();
+		int remainingDeficit = initialFoodCost;
 
-		if( amountNectar > nectarUsedByFanners){
-			honey.add(nectarUsedByFanners / honeyPotency);
-			nectar.sub(nectarUsedByFanners);
-		}else if(amountNectar > 0){
-			honey.add(amountNectar / honeyPotency);
-			nectar.setAmount(0);
-			//Throw "Unused Fanners!" warning
+		remainingDeficit = attemptDrainResource(nectar, remainingDeficit);
+		remainingDeficit = attemptDrainResource(honey, remainingDeficit);
+
+		if(remainingDeficit > 0){
+			int beesToKill = (int)(remainingDeficit * upgrades.get("starvationMult"));
+			Logger.log(beesToKill + " bees are about to be killed via starvation");
+			killBees(beesToKill);
+			// Do NOT throw starvation warning here!
 		}
 	}
-	private int calcFannerProduction(){
-		int numFanners = getDepartmentInfo().getFanner().getNumBees();
+	private int attemptDrainResource(PotentResource resource, int currentDeficit){
+		//attemptDrainResource() created using Google Gemini
+		if(currentDeficit <= 0){ return 0; }
 
-		return getJobInfo().getFannerHoney().calcProduction(numFanners);
+		int resourceFoodValue = resource.getFoodValue();
+
+		if(currentDeficit <= resourceFoodValue){
+			resource.sub(currentDeficit / resource.getPotency());
+			return 0;
+		}else{
+			resource.setAmount(0);
+			return (currentDeficit - resourceFoodValue);
+		}
 	}
+	private void updateHoney(){
+		Resource honey = getResources().honey();
+		Resource nectar = getResources().nectar();
+		int amountNectar = getResources().nectar().getAmount();
+		int nectarUsedByFanners = jobInfo.getFannerHoney().calcProduction();
+		//Throw "Unused Fanners!" warning if fannerHoney.calcProduction() > nectar.getAmount()
+		int honeyPotency = getResources().honey().getPotency();
 
-	private void updateHiveJobs(){
-		getHiveJobInfo().getHiveTemperatureRegulator().update(this);
-		getHiveJobInfo().getBeeCreator().update(this);
+		int nectarDrained = Math.min(amountNectar, nectarUsedByFanners);
+
+		honey.add(nectarDrained / honeyPotency);
+		nectar.sub(nectarDrained);
 	}
 
 	private void updateOccurrences(){
@@ -243,12 +247,8 @@ public class Hive {
 		}
 	}
 	private void addProdModToAllJobs(int duration, double modifier){
-		ArrayList<Modifiable> allModifiableJobs = new ArrayList<Modifiable>();
-		allModifiableJobs.addAll(getJobInfo().getJobs());
-		allModifiableJobs.addAll(getHiveJobInfo().getHiveJobs());
-
-		for(Modifiable job: allModifiableJobs){
-			job.addProdMod(duration, modifier);
+		for(Job job: jobInfo.getAllJobs()){
+			job.getModifiers().addProdMod(duration, modifier);
 		}
 	}
 
@@ -268,7 +268,7 @@ public class Hive {
 			}else if(randPredator == 1){//Wasps--only in summer?
 				getResources().honey().setAmount( (int)(getResources().honey().getAmount() / 2) );
 				killPercentBees(2);
-				getHiveJobInfo().getBeeCreator().addProdMod(40, .5);
+				jobInfo.getBeeCreator().getModifiers().addProdMod(40, .5);
 			}else if(randPredator == 2){//Hornets
 				killPercentBees(7);
 			}else if(randPredator == 3){//Mice--only in winter?
@@ -336,193 +336,6 @@ public class Hive {
 	}
 
 
-//	private void updateWorld(){
-//		worldInfo.update();
-//		temperatureInfo.changeHiveTemp(calcHowMuchHiveTempChangesInResponseToCurrentWorldTemp());
-//	}
-//	private double calcHowMuchHiveTempChangesInResponseToCurrentWorldTemp(){
-//		double deltaTemp = worldInfo.getWorldTemp() - temperatureInfo.getHiveTemp();
-//		deltaTemp *= .1;
-//		return deltaTemp;
-//	}
-//
-//	private void updateDepartmentJobs(){
-//		for(int i = 0; i < departmentInfo.getDepartments().size(); i++){
-//			Department dept = departmentInfo.getDepartments().get(i);
-//
-//			dept.work();
-//			temperatureInfo.changeHiveTemp(dept.getTotalHeat());
-//			subFood(dept.getTotalFoodCost());
-//		}
-//		//Honey is converted, not produced: it must be managed manually here instead of through a department
-//		updateHoney();
-//	}
-//	private void updateHoney(){
-//		int nectarUsedByFanners = calcFannerProduction();
-//		int amountNectar = resources.nectar().getAmount();
-//		Resource honey = resources.honey();
-//		Resource nectar = resources.nectar();
-//		int honeyPotency = resources.honey().getPotency();
-//
-//		if( amountNectar > nectarUsedByFanners){
-//			honey.add(nectarUsedByFanners / honeyPotency);
-//			nectar.sub(nectarUsedByFanners);
-//		}else if(amountNectar > 0){
-//			honey.add(amountNectar / honeyPotency);
-//			nectar.setAmount(0);
-//			//Throw "Unused Fanners!" warning
-//		}
-//	}
-//	private int calcFannerProduction(){
-//		int numFanners = departmentInfo.getFanner().getNumBees();
-//
-//		return jobInfo.getFannerHoney().calcProduction(numFanners);
-//	}
-//
-//	private void updateHiveJobs(){
-//		hiveJobInfo.getHiveTemperatureRegulator().update(this);
-//		hiveJobInfo.getBeeCreator().update(this);
-//	}
-//
-//	//These next methods are all for updating the various occurrences
-//	private void updateOccurrences(){
-//		handleStates(); //State handling is based on the immediate state of the hive
-//		handleEvents(); //Events only last for one tick and are influenced by both hive state and random chance
-//		handleSituations(); //Situations endure for a time and adjust the food, heat, and production of jobs
-//		//Maybe throw warnings/memos?
-//	}
-//
-//	private void handleStates(){
-//		checkStarvation();
-//		checkHygiene();
-//		checkQueenHealth();
-//		checkTemperature();
-//	}
-//	private void checkStarvation(){
-//		int amountNectar = resources.nectar().getAmount();
-//		int amountHoney = resources.honey().getAmount();
-//
-//		if(amountNectar <= 0 && amountHoney <= 0){//Starving
-//			//Throw starvation warning
-//		}
-//	}
-//	private void checkHygiene(){
-//		int amountHygiene = resources.hygiene().getAmount();
-//		int lowHygieneLimit = resourceData.lowHygiene();
-//
-//		if(amountHygiene < lowHygieneLimit){
-//			killBees(lowHygieneLimit - amountHygiene);
-//			//The number of bees killed by this is NOT tested or fine-tuned. Fix this after testing
-//		}
-//	}
-//	private void checkQueenHealth(){
-//		int queenHealth = resources.queenHealth().getAmount();
-//		int lowQueenHealth = resourceData.lowQueenHealth();
-//
-//		if(queenHealth <= lowQueenHealth){
-//			addProdModToAllJobs(1, 0.85);
-//		}
-//	}
-//	private void checkTemperature(){
-//		double currentHiveTemp = temperatureInfo.getHiveTemp();
-//
-//		if(currentHiveTemp < 55 || currentHiveTemp > 113){
-//			killPercentBees(3.0);
-//		}
-//	}
-//	private void addProdModToAllJobs(int duration, double modifier){
-//		ArrayList<Modifiable> allModifiableJobs = new ArrayList<Modifiable>();
-//		allModifiableJobs.addAll(jobInfo.getJobs());
-//		allModifiableJobs.addAll(hiveJobInfo.getHiveJobs());
-//
-//		for(Modifiable job: allModifiableJobs){
-//			job.addProdMod(duration, modifier);
-//		}
-//	}
-//
-//	private void handleEvents(){
-//		//Generate a random number from 0-99
-//		Random rand = new Random();
-//		int chanceAttacked = calcChanceAttacked();
-//
-//		//Predators
-//		if(chanceAttacked >= rand.nextInt(0, 100)){
-//			//Predators
-//			int randPredator = rand.nextInt(0, 5);
-//
-//			if(randPredator == 0){//Robber Bees
-//				resources.honey().setAmount(0);
-//				killBees(departmentInfo.getGuard().getNumBees());
-//			}else if(randPredator == 1){//Wasps--only in summer?
-//				resources.honey().setAmount( (int)(resources.honey().getAmount() / 2) );
-//				killPercentBees(2);
-//				hiveJobInfo.getBeeCreator().addProdMod(40, .5);
-//			}else if(randPredator == 2){//Hornets
-//				killPercentBees(7);
-//			}else if(randPredator == 3){//Mice--only in winter?
-//				resources.wax().subPercent(.10);
-//				resources.honey().subPercent(.10);
-//				resources.pollen().subPercent(.10);
-//				resources.nectar().subPercent(.10);
-//			}else if(randPredator == 4){//Bears--Make less common? More of
-//				resources.wax().subPercent(.10);
-//				resources.honey().subPercent(.10);
-//				resources.pollen().subPercent(.10);
-//				resources.nectar().subPercent(.10);
-//			}
-//		}
-//	}
-//	private int calcChanceAttacked(){
-//		//chanceAttacked is a linear equation; more strength and higher guardBees-to-totalBees = less chance of attack
-//		double percentGuard = departmentInfo.getGuard().getNumBees() / getTotalBees();
-//		int amountStrength = resources.strength().getAmount();
-//		double strengthMult = upgrades.get("strengthMult");
-//
-//		return (int)(-1 * percentGuard * (amountStrength * strengthMult + 100));
-//	}
-//
-////		//chancePest is a linear equation; more hygiene = lower chance of pests
-////		int chancePest = (int)(-1*(departmentInfo.getGuard().getNumBees() / getTotalBees())*resources.strength().getAmount() + 100);
-////		if( chancePest >= (int)(Math.random()*100) ){
-////			killPercentBees(.1);
-////		}
-//	private void handleSituations(){
-//		createSituations();
-//		updateSituations();
-//	}
-//	private void createSituations(){
-//		if(situationHappened()){
-//			Random rand = new Random();
-//			int randIndex = rand.nextInt(situationData.getAllSituations().size());
-//
-//			Situation temp = situationData.getAllSituations().get(randIndex);
-//			situationData.getCurrentSituations().add(temp);
-//		}
-//	}
-//	private boolean situationHappened(){
-//		Random rand = new Random();
-//		int counter = situationData.getSituationCounter();
-//
-//		double randNum = rand.nextDouble(0, 1.0);
-//		double chance = counter / 60.0;
-//
-//		if(randNum <= chance){
-//			situationData.incrementSituationCounter();
-//			return true;
-//		}else{
-//			situationData.resetSituationCounter();
-//			return false;
-//		}
-//	}
-//	private void updateSituations(){
-//		for(Situation situation: situationData.getCurrentSituations()){
-//			situation.update(this);
-//		}
-//	}
-
-
-	//Some Helpful Methods
-
 	public void adjustBeesEverywhere(int numBees){
 		int numDepartments = departmentInfo.getDepartments().size();
 		int remainder = numBees % numDepartments;
@@ -562,42 +375,11 @@ public class Hive {
 		}
 		return total;
 	}
-	public void subFood(int initialFoodCost){
-		//subFood() refactored using Google Gemini
-		PotentResource nectar = resources.nectar();
-		PotentResource honey = resources.honey();
-		int remainingDeficit = initialFoodCost;
-
-		remainingDeficit = attemptDrainResource(nectar, remainingDeficit);
-		remainingDeficit = attemptDrainResource(honey, remainingDeficit);
-
-		if(remainingDeficit > 0){
-			int beesToKill = (int)(remainingDeficit * upgrades.get("starvationMult"));
-			Logger.log(beesToKill + " bees are about to be killed via starvation");
-			killBees(beesToKill);
-			// Do NOT throw starvation warning here!
-		}
-	}
-	private int attemptDrainResource(PotentResource resource, int currentDeficit){
-		//attemptDrainResource() created using Google Gemini
-		if(currentDeficit <= 0){ return 0; }
-
-		int resourceFoodValue = resource.getFoodValue();
-
-		if(currentDeficit <= resourceFoodValue){
-			resource.sub(currentDeficit / resource.getPotency());
-			return 0;
-		}else{
-			resource.setAmount(0);
-			return (currentDeficit - resourceFoodValue);
-		}
-	}
 
 
 	public boolean getGameLost(){ return gameLost; }
 	public void setGameLost(boolean gameLost){ this.gameLost = gameLost; }
 	public JobInfo getJobInfo(){ return jobInfo; }
-	public HiveJobInfo getHiveJobInfo(){ return hiveJobInfo; }
 	public Resources getResources(){ return resources; }
 	public TemperatureInfo getTemperatureInfo(){ return temperatureInfo; }
 	public DepartmentInfo getDepartmentInfo(){ return departmentInfo; }
@@ -605,13 +387,5 @@ public class Hive {
 	public HashMap<String, Double> getUpgrades(){ return upgrades; }
 	public SituationData getSituationData(){ return situationData; }
 	public ResourceData getResourceData(){ return resourceData; }
-	public ArrayList<Modifiable> getAllJobs(){
-		ArrayList<Modifiable> allJobs = new ArrayList<Modifiable>();
-
-		allJobs.addAll(jobInfo.getJobs());
-		allJobs.addAll(hiveJobInfo.getHiveJobs());
-
-		return allJobs;
-	}
 	public MiscData getMiscData(){ return miscData; }
 }

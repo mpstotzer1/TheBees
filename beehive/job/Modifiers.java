@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class Modifiers {
+    private double productionConstant;
     private double foodCostConstant;
     private double heatConstant;
-    private double productionConstant;
     private ArrayList<EventModifier> prodMod = new ArrayList<EventModifier>();
     private ArrayList<EventModifier> foodMod = new ArrayList<EventModifier>();
     private ArrayList<EventModifier> heatMod = new ArrayList<EventModifier>();

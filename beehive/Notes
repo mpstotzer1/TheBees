@@ -1,31 +1,31 @@
-NOTE:	The Occurrence sections are chock full of hard-coded values. Just be aware of that.
 NOTE:	The Occurrences have a lot of flexibility. Make the most out of it with fun and
 		unique buffs/debuffs, status effects, etc.
-NOTE:	Newly-created bees are added to the houseBees department
-NOTE:   Time is governed by "ticks" of a clock (1 tick = 1/2 second)
+NOTE:	Newly-created bees are added to the cluster department
+NOTE:   1 tick = 1/2 second
 
 
 TO DO:
-        -Delete hivestate and all its files
+        -Refactor droneXP to NOT be a DepartmentJob
+        -Look at upgrades hashmap. Consider replacing with a Record class
         -Refactor winter
         -Get upgrades figured out, get constants figured out
         -Figure out how to throw warnings to the player
-		-Eventually figure out the proper decimal number for heatTempConst
 
 
 CONSIDERATIONS:
 	-Make the bad eventModifier/event/states more interesting than "some bees died"?
 	-Reduce the complexity of occurrences to only a FEW bad things that are influenced by
 	 the hive's variables (strength, hygiene, etc.)?
-	-Hard code the default department for worker and drone Batches?
 	-Change Hive's "cluster" department to "beard" department? (depending on how winter clustering works)
 	-Maybe add a mechanic for maximum honey, etc. capacity that needs to be upgraded with wax?
 
 
 Fragilities:
-    -value for winterFoodCost (in updateWinter() in Hive) is hardcoded into the source code
+    -Value for winterFoodCost (in updateWinter() in Hive) is hardcoded into the source code
+    -The equations in occurrences (and possibly elsewhere) can have a div0 error
+    -Occurrence handling methods full of hard-coded values
 
 
-LEFT OFF AT: Refactoring jobs and departments (again!)
-                Hive.java updateJobs()
-                    figure out proper order for heat, foodCost, and production
+LEFT OFF AT: Hive.java adjustBeesEverywhere() and BeeCreator.java adjustBeesEverywhere() are identical. Perhaps it's
+             wise to consolidate it, along with the other "useful methods" in Hive.java, to a different location. This
+             would solve the duplicate code problem without causing too much of a mess.

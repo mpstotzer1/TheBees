@@ -1,30 +1,43 @@
 package beehive.job;
 
-import beehive.Hive;
 import beehive.Logger;
+import beehive.MiscData;
+import beehive.department.Department;
+import beehive.department.DepartmentInfo;
+import beehive.resource.Resources;
+import beehive.temperature.TemperatureInfo;
 import beehive.temperature.TemperatureRegulationRanges;
 
 public class BeeCreator extends Job{
-    private Hive hive;
+    //private Hive hive;
+    private Resources resources;
+    private TemperatureInfo temperatureInfo;
+    private MiscData miscData;
+    private DepartmentInfo departmentInfo;
 
-    public BeeCreator(Hive hive, double foodCostConstant, double heatConstant, double productionConstant) {
-        this.hive = hive;
+    public BeeCreator(Resources resources, TemperatureInfo temperatureInfo, MiscData miscData, DepartmentInfo departmentInfo,
+                      double foodCostConstant, double heatConstant, double productionConstant) {
+        this.resources = resources;
+        this.temperatureInfo = temperatureInfo;
+        this.miscData = miscData;
+        this.departmentInfo = departmentInfo;
+
         modifiers = new Modifiers(foodCostConstant, heatConstant, productionConstant);
     }
 
-
     protected void workOverride(){
         if(insideBroodTempRange()){
-            hive.adjustBeesEverywhere(calcNumBeesToAdd()); //DEBUG
-            hive.getResources().pollen().setAmount(0);
-            Logger.log("Number bees to be produced: " + calcNumBeesToAdd());
-            //hive.addBeesToCluster(calcNumBeesToAdd());  DEBUG
+            int beesToAdd = calcNumBeesToAdd();
+            adjustBeesEverywhere(beesToAdd); //DEBUG
+            //hive.addBeesToCluster(beesToAdd);  //DEBUG
+            Logger.log("Number bees to be produced: " + beesToAdd);
 
-            hive.getTemperatureInfo().changeHiveTemp(calcHeat());
+            int pollenCost = simpleRound(beesToAdd / modifiers.calcProdMultiplier());
+            resources.pollen().sub(pollenCost);
         }
     }
     private boolean insideBroodTempRange(){
-        double hiveTemp = hive.getTemperatureInfo().getHiveTemp();
+        double hiveTemp = temperatureInfo.getHiveTemp();
         double minBroodTemp = TemperatureRegulationRanges.BROOD.getMinTemperature();
         double maxBroodTemp = TemperatureRegulationRanges.BROOD.getMaxTemperature();
 
@@ -34,13 +47,31 @@ public class BeeCreator extends Job{
         return insideBroodRange;
     }
     private int calcNumBeesToAdd(){
-        int pollen = hive.getResources().pollen().getAmount();
-        double multiplier = modifiers.calcProdMultiplier();
+        int maxBeesPossibleGivenPollen = (int)(resources.pollen().getAmount() * modifiers.calcProdMultiplier());
+        int maxBeesProducedPerTick = miscData.maxNumBeesProducedPerTick();
 
-        double numBees = pollen * multiplier;
-        numBees = Math.clamp(numBees, 0.0, hive.getMiscData().maxNumBeesProducedPerTick());
+        return Math.min(maxBeesPossibleGivenPollen, maxBeesProducedPerTick);
+    }
+    private int simpleRound(double roundee){
+        roundee += .5;
 
-        return (int)(numBees);
+        return (int)(roundee);
+    }
+    public void adjustBeesEverywhere(int numBees){
+        int numDepartments = departmentInfo.getDepartments().size();
+        int remainder = numBees % numDepartments;
+        int beesToAddPerDepartment = (numBees - remainder) / numDepartments;
+
+        for(Department dept: departmentInfo.getDepartments()){
+            dept.adjustBees(beesToAddPerDepartment);
+        }
+
+        for(Department dept : departmentInfo.getDepartments()){
+            if(remainder <= 0){ break; }
+
+            dept.adjustBees(1);
+            remainder--;
+        }
     }
 
     public double calcHeat(){

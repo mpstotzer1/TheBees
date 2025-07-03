@@ -1,21 +1,3 @@
-//The Initializer creates a Hive
- /* 	I want the Controller to create an instance of Hive and then instantiate all its variables i.e. make
- * a functioning Hive object. It should essentially keep the Hive in a loop that updates it constantly
- * and doesn't break until the player wins or loses. Every time it calls the Hive.work() function, it should
- * redraw the graphics afterwards. This will come much later.
- * 		It should also manage the upgrades for the Hivemind, probably with a hashmap. Those
- * values will be used to instantiate the Hive object.
- * 		It needs to also control the passage of time and keep a running (but pausable) clock.
- * 		It needs to manage the seasons in the game and adjust the Hive's variables accordingly. Most
- * importantly, it needs to manage how winter and clustering work.
- */
-
-/*		KEY RESPONSIBILITIES
- * -Have the game loop that updates the Hive and the graphics
- * -Create the Hive object from the upgrade hashmaps
- * -Control the seasons (WINTER!)
- * -Control the passage of time
- * */
 package beehive;
 
 import beehive.department.Department;
@@ -43,13 +25,12 @@ public class Initializer{
 		ResourceData resourceData = initializeResourceData();
 		TemperatureInfo temperatureInfo = initializeTemperature();
 		WorldInfo worldInfo = initializeWorld();
-		JobInfo jobInfo = initializeJobs(resources);
-		HiveJobInfo hiveJobInfo = initializeHiveJobs();
-		DepartmentInfo departmentInfo = initializeDepartments(jobInfo);
+		DepartmentInfo departmentInfo = initializeDepartments();
 		SituationData situationData = initializeSituations();
 		MiscData miscData = initializeMiscData();
+		JobInfo jobInfo = initializeJobs(resources, departmentInfo, temperatureInfo, miscData, upgrades);
 
-    	Hive hive = new Hive(resources, resourceData, temperatureInfo, worldInfo, departmentInfo, jobInfo, hiveJobInfo, situationData, upgrades, miscData);
+		Hive hive = new Hive(resources, resourceData, temperatureInfo, worldInfo, departmentInfo, jobInfo, situationData, upgrades, miscData);
 
 		for(Department dept: departmentInfo.getDepartments()){
 			hive.addBeesToDepartment(50, dept);
@@ -58,59 +39,50 @@ public class Initializer{
     	return hive;
     }
 
-//	private HiveStateInfo initializeHiveState() {
-//		HiveStateInfo temp = new HiveStateInfo();
-//
-//		return temp;
-//	}
 	private ResourceData initializeResourceData() {
 		ResourceData temp = new ResourceData(20, 20);
 
 		return temp;
 	}
-	private DepartmentInfo initializeDepartments(JobInfo jobInfo) {
-		Department nurse = new Department(jobInfo.getNurseQueenHealth());
-		Department forager = new Department(jobInfo.getForagerNectar(), jobInfo.getForagerPollen());
-		Department guard = new Department(jobInfo.getGuardStrength());
-		Department waxMason = new Department(jobInfo.getWaxMasonWax());
-		Department houseBee = new Department(jobInfo.getHouseBeeHygiene());
-		Department fanner = new Department(jobInfo.getFannerHoney());
-		Department drone = new Department(jobInfo.getDroneXP());
-		Department cluster = new Department(jobInfo.getClusterIdle());
+	private DepartmentInfo initializeDepartments() {
+		Department nurse = new Department();
+		Department forager = new Department();
+		Department guard = new Department();
+		Department waxMason = new Department();
+		Department houseBee = new Department();
+		Department fanner = new Department();
+		Department drone = new Department();
+		Department cluster = new Department();
 
 		DepartmentInfo temp = new DepartmentInfo(nurse, forager, guard, waxMason, houseBee, fanner, drone, cluster);
 
 		return temp;
 	}
-	private HiveJobInfo initializeHiveJobs() {
-		HiveTemperatureRegulator hiveTemperatureRegulator = new HiveTemperatureRegulator(0.5, 0.0, 2.5);
-		BeeCreator beeCreator = new BeeCreator(0.0, .03, .40);
-
-		HiveJobInfo temp = new HiveJobInfo(hiveTemperatureRegulator, beeCreator);
-
-		return temp;
-	}
-	private JobInfo initializeJobs(Resources resources) {
+	private JobInfo initializeJobs(Resources resources, DepartmentInfo departments, TemperatureInfo temperatureInfo, MiscData miscData, HashMap<String, Double> upgrades) {
 		ResourceAddStrategy resourceAddStrategy = new ResourceAddStrategy();
 		ResourceSetStrategy resourceSetStrategy = new ResourceSetStrategy();
 		ResourceNullStrategy resourceNullStrategy = new ResourceNullStrategy();
 
-		DepartmentJob foragerNectar = new DepartmentJob(resources.nectar(), resourceAddStrategy, 0.5, .03, 1.0);
-		DepartmentJob foragerPollen = new DepartmentJob(resources.pollen(), resourceAddStrategy, 0.5, .03, .15);
-		DepartmentJob waxMasonWax = new DepartmentJob(resources.wax(), resourceAddStrategy, 0.5, .03, .5);
-		DepartmentJob droneXP = new DepartmentJob(resources.xp(), resourceAddStrategy, 0.5, .03, .35);
+		DepartmentJob foragerNectar = new DepartmentJob(resources.nectar(), resourceAddStrategy, departments.getForager(), 0.5, .03, 1.0);
+		DepartmentJob foragerPollen = new DepartmentJob(resources.pollen(), resourceAddStrategy, departments.getForager(), 0.5, .03, .15);
+		DepartmentJob waxMasonWax = new DepartmentJob(resources.wax(), resourceAddStrategy, departments.getWaxMason(), 0.5, .03, .5);
+		DepartmentJob droneXP = new DepartmentJob(resources.xp(), resourceAddStrategy, departments.getDrone(), 0.5, .03, .35);
 
-		DepartmentJob nurseQueenHealth = new DepartmentJob(resources.queenHealth(), resourceSetStrategy, 0.5, .03, 1.0);
-		DepartmentJob guardStrength = new DepartmentJob(resources.strength(), resourceSetStrategy, 0.5, .03, 1.0);
-		DepartmentJob houseBeeHygiene = new DepartmentJob(resources.hygiene(), resourceSetStrategy, 0.5, .03, 1.0);
+		DepartmentJob nurseQueenHealth = new DepartmentJob(resources.queenHealth(), resourceSetStrategy, departments.getNurse(), 0.5, .03, 1.0);
+		DepartmentJob guardStrength = new DepartmentJob(resources.strength(), resourceSetStrategy, departments.getGuard(), 0.5, .03, 1.0);
+		DepartmentJob houseBeeHygiene = new DepartmentJob(resources.hygiene(), resourceSetStrategy, departments.getHouseBee(), 0.5, .03, 1.0);
 
-		DepartmentJob clusterIdle = new DepartmentJob(resources.nullResource(), resourceNullStrategy, 0.5, .03, 1.0);
-		DepartmentJob fannerHoney = new DepartmentJob(resources.nullResource(), resourceNullStrategy, 0.5, .03, 10.0);
+		DepartmentJob clusterIdle = new DepartmentJob(resources.nullResource(), resourceNullStrategy, departments.getCluster(), 0.5, .03, 1.0);
 		//Job fannerHoney produces "null" because it is managed with separate logic in Hive.java
+		DepartmentJob fannerHoney = new DepartmentJob(resources.nullResource(), resourceNullStrategy, departments.getFanner(), 0.5, 1.2, 10.0);
+
+		BeeCreator beeCreator = new BeeCreator(resources, temperatureInfo, miscData, departments, 0.0, .03, .4);
+		HiveTemperatureRegulator hiveTemperatureRegulator = new HiveTemperatureRegulator(temperatureInfo, upgrades, .5, 0.0, 2.5);
 
 		JobInfo temp = new JobInfo(foragerNectar, foragerPollen, waxMasonWax, droneXP,
-				nurseQueenHealth, guardStrength, houseBeeHygiene,
-				clusterIdle, fannerHoney);
+									nurseQueenHealth, guardStrength, houseBeeHygiene,
+									clusterIdle, fannerHoney,
+									beeCreator, hiveTemperatureRegulator);
 
 		return temp;
 	}
