@@ -9,7 +9,6 @@ import beehive.temperature.TemperatureInfo;
 import beehive.temperature.TemperatureRegulationRanges;
 
 public class BeeCreator extends Job{
-    //private Hive hive;
     private Resources resources;
     private TemperatureInfo temperatureInfo;
     private MiscData miscData;
@@ -28,7 +27,7 @@ public class BeeCreator extends Job{
     protected void workOverride(){
         if(insideBroodTempRange()){
             int beesToAdd = calcNumBeesToAdd();
-            adjustBeesEverywhere(beesToAdd); //DEBUG
+            departmentInfo.adjustBeesEverywhere(beesToAdd); //DEBUG
             //hive.addBeesToCluster(beesToAdd);  //DEBUG
             Logger.log("Number bees to be produced: " + beesToAdd);
 
@@ -56,22 +55,6 @@ public class BeeCreator extends Job{
         roundee += .5;
 
         return (int)(roundee);
-    }
-    public void adjustBeesEverywhere(int numBees){
-        int numDepartments = departmentInfo.getDepartments().size();
-        int remainder = numBees % numDepartments;
-        int beesToAddPerDepartment = (numBees - remainder) / numDepartments;
-
-        for(Department dept: departmentInfo.getDepartments()){
-            dept.adjustBees(beesToAddPerDepartment);
-        }
-
-        for(Department dept : departmentInfo.getDepartments()){
-            if(remainder <= 0){ break; }
-
-            dept.adjustBees(1);
-            remainder--;
-        }
     }
 
     public double calcHeat(){

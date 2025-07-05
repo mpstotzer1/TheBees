@@ -33,6 +33,48 @@ public class DepartmentInfo {
 		departments.add(drone);
 		departments.add(cluster);
 	}
+
+
+	public void adjustBeesEverywhere(int numBees){
+		int numDepartments = departments.size();
+		int remainder = numBees % numDepartments;
+		int beesToAddPerDepartment = (numBees - remainder) / numDepartments;
+
+		for(Department dept: departments){
+			dept.adjustBees(beesToAddPerDepartment);
+		}
+
+		for(Department dept : departments){
+			if(remainder <= 0){ break; }
+
+			dept.adjustBees(1);
+			remainder--;
+		}
+	}
+	public void addBeesToDepartment(int beesToAdd, Department destination){
+		destination.adjustBees(beesToAdd);
+	}
+	public void killBees(int beesToKill){
+		beesToKill *= -1;
+		adjustBeesEverywhere(beesToKill);
+
+		//If you're out of bees, your hive is dead and you lose the game (womp womp womp)
+		//Logger.log(beesToKill + " bees killed");
+	}
+	public void killPercentBees(double percentToKill){
+		int total = getTotalBees();
+		int beesToKill = (int) (total * .01 * percentToKill);
+
+		killBees(beesToKill);
+	}
+	public int getTotalBees(){
+		int total = 0;
+		for(Department dept: departments){
+			total += dept.getNumBees();
+		}
+		return total;
+	}
+
     
     public Department getNurse() { return nurse; }
     public Department getForager() { return forager; }

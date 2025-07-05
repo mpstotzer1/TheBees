@@ -1,10 +1,8 @@
 package beehive;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
-import beehive.department.Department;
 import beehive.department.DepartmentInfo;
 import beehive.event.Situation;
 import beehive.event.SituationData;
@@ -58,7 +56,7 @@ public class Hive {
 
 	
 	public void update(){
-		if(getTotalBees() <= 0){
+		if(departmentInfo.getTotalBees() <= 0){
 			gameLost = true;
 			return;
 		}
@@ -113,14 +111,13 @@ public class Hive {
 //		}
 	}
 
-
 	public void updateSummer(){
 		updateWorld();
 		updateJobs();
 		updateOccurrences();
 		//Maybe throw warnings/memos?
 
-		if(getTotalBees() <= 0){
+		if(departmentInfo.getTotalBees() <= 0){
 			setGameLost(true);
 		}
 	}
@@ -165,7 +162,7 @@ public class Hive {
 		if(remainingDeficit > 0){
 			int beesToKill = (int)(remainingDeficit * upgrades.get("starvationMult"));
 			Logger.log(beesToKill + " bees are about to be killed via starvation");
-			killBees(beesToKill);
+			departmentInfo.killBees(beesToKill);
 			// Do NOT throw starvation warning here!
 		}
 	}
@@ -223,7 +220,7 @@ public class Hive {
 
 		if(amountHygiene < lowHygieneLimit){
 			int beesToKill = lowHygieneLimit - amountHygiene;
-			killBees(beesToKill);
+			departmentInfo.killBees(beesToKill);
 
 			Logger.log(beesToKill + " bees killed via hygiene");
 			//The number of bees killed by this is NOT tested or fine-tuned. Fix this after testing
@@ -241,9 +238,9 @@ public class Hive {
 		double currentHiveTemp = getTemperatureInfo().getHiveTemp();
 
 		if(currentHiveTemp < 55 || currentHiveTemp > 113){
-			killPercentBees(3.0);
+			departmentInfo.killPercentBees(3.0);
 
-			Logger.log((getTotalBees() * .03) + " bees killed via temperature");
+			Logger.log((departmentInfo.getTotalBees() * .03) + " bees killed via temperature");
 		}
 	}
 	private void addProdModToAllJobs(int duration, double modifier){
@@ -264,13 +261,13 @@ public class Hive {
 
 			if(randPredator == 0){//Robber Bees
 				getResources().honey().setAmount(0);
-				killBees(getDepartmentInfo().getGuard().getNumBees());
+				departmentInfo.killBees(getDepartmentInfo().getGuard().getNumBees());
 			}else if(randPredator == 1){//Wasps--only in summer?
 				getResources().honey().setAmount( (int)(getResources().honey().getAmount() / 2) );
-				killPercentBees(2);
+				departmentInfo.killPercentBees(2);
 				jobInfo.getBeeCreator().getModifiers().addProdMod(40, .5);
 			}else if(randPredator == 2){//Hornets
-				killPercentBees(7);
+				departmentInfo.killPercentBees(7);
 			}else if(randPredator == 3){//Mice--only in winter?
 				getResources().wax().subPercent(.10);
 				getResources().honey().subPercent(.10);
@@ -288,7 +285,7 @@ public class Hive {
 	}
 	private int calcChanceAttacked(){
 		//chanceAttacked is a linear equation; more strength and higher guardBees-to-totalBees = less chance of attack
-		double percentGuard = getDepartmentInfo().getGuard().getNumBees() / getTotalBees();
+		double percentGuard = getDepartmentInfo().getGuard().getNumBees() / departmentInfo.getTotalBees();
 		int amountStrength = getResources().strength().getAmount();
 		double strengthMult = getUpgrades().get("strengthMult");
 
@@ -333,47 +330,6 @@ public class Hive {
 		for(Situation situation: getSituationData().getCurrentSituations()){
 			situation.update(this);
 		}
-	}
-
-
-	public void adjustBeesEverywhere(int numBees){
-		int numDepartments = departmentInfo.getDepartments().size();
-		int remainder = numBees % numDepartments;
-		int beesToAddPerDepartment = (numBees - remainder) / numDepartments;
-
-		for(Department dept: departmentInfo.getDepartments()){
-			dept.adjustBees(beesToAddPerDepartment);
-		}
-
-		for(Department dept : departmentInfo.getDepartments()){
-			if(remainder <= 0){ break; }
-
-			dept.adjustBees(1);
-			remainder--;
-		}
-	}
-	public void addBeesToDepartment(int beesToAdd, Department destination){
-		destination.adjustBees(beesToAdd);
-	}
-	public void killBees(int beesToKill){
-		beesToKill *= -1;
-		adjustBeesEverywhere(beesToKill);
-
-		//If you're out of bees, your hive is dead and you lose the game (womp womp womp)
-		//Logger.log(beesToKill + " bees killed");
-	}
-	public void killPercentBees(double percentToKill){
-		int total = getTotalBees();
-		int beesToKill = (int) (total * .01 * percentToKill);
-
-		killBees(beesToKill);
-	}
-	public int getTotalBees(){
-		int total = 0;
-		for(int i = 0; i < departmentInfo.getDepartments().size(); i++){
-			total += departmentInfo.getDepartments().get(i).getNumBees();
-		}
-		return total;
 	}
 
 

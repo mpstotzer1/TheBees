@@ -11,6 +11,6 @@ public class Disease implements Strategy{
         hive.getJobInfo().getGuardStrength().addProdMod(duration, .8);
     }
     public void doContinuous(Hive hive){
-        hive.killPercentBees(.75);
+        hive.getDepartmentInfo().killPercentBees(.75);
     }
 }

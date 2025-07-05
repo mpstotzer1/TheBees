@@ -32,9 +32,7 @@ public class Initializer{
 
 		Hive hive = new Hive(resources, resourceData, temperatureInfo, worldInfo, departmentInfo, jobInfo, situationData, upgrades, miscData);
 
-		for(Department dept: departmentInfo.getDepartments()){
-			hive.addBeesToDepartment(50, dept);
-		}
+		departmentInfo.adjustBeesEverywhere(400);
 
     	return hive;
     }
