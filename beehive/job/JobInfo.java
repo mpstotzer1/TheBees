@@ -2,8 +2,6 @@
 //Job nomenclature: "department" + "ResourceInfluenced"
 package beehive.job;
 
-import beehive.Hive;
-
 import java.util.ArrayList;
 
 public class JobInfo {

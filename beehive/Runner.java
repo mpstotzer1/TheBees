@@ -10,14 +10,20 @@ public class Runner{
 	public static void main(String[] args) throws InterruptedException {
 
     	Initializer initializer = new Initializer();
-    	Hive hive = initializer.createHive();
+    	initializer.initializeModuleGateway();
+		GameLogic gameLogic = new GameLogic();
+		ModuleGateway.getDepartmentInfo().adjustBeesEverywhere(400);
+
 
 		int debugCounter = 0;
 
-		while(!(hive.getGameLost()) && debugCounter < 360 ){
-			hive.update();
+		while(!(gameLogic.getGameLost()) && debugCounter < 360 ){
+			gameLogic.update();
 
+			Logger.log("Current Hive temp: " + ModuleGateway.getTemperatureInfo().getHiveTemp());
 			Logger.log("-------------Hive updated-------------");
+
+			//gameLogic.toString();
 
 			TimeUnit.MILLISECONDS.sleep(10);
 			debugCounter++;

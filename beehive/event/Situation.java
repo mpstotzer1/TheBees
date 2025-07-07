@@ -1,6 +1,6 @@
 package beehive.event;
 
-import beehive.Hive;
+import beehive.GameLogic;
 import beehive.event.situationStrategies.Strategy;
 
 public class Situation {
@@ -15,13 +15,13 @@ public class Situation {
         doneOnce = false;
     }
 
-    public final void update(Hive hive){
+    public final void update(GameLogic gameLogic){
         if(duration > 0){
             if(!doneOnce){
-                strategy.doOnce(duration, hive);
+                strategy.doOnce(duration, gameLogic);
                 doneOnce = true;
             }else{
-                strategy.doContinuous(hive);
+                strategy.doContinuous(gameLogic);
                 duration--;
             }
         }

@@ -15,7 +15,7 @@ TO DO:
 CONSIDERATIONS:
 	-Make the bad eventModifier/event/states more interesting than "some bees died"?
 	-Reduce the complexity of occurrences to only a FEW bad things that are influenced by
-	 the hive's variables (strength, hygiene, etc.)?
+	 the gameLogic's variables (strength, hygiene, etc.)?
 	-Change Hive's "cluster" department to "beard" department? (depending on how winter clustering works)
 	-Maybe add a mechanic for maximum honey, etc. capacity that needs to be upgraded with wax?
 
@@ -26,6 +26,4 @@ Fragilities:
     -Occurrence handling methods full of hard-coded values
 
 
-LEFT OFF AT: Hive.java adjustBeesEverywhere() and BeeCreator.java adjustBeesEverywhere() are identical. Perhaps it's
-             wise to consolidate it, along with the other "useful methods" in Hive.java, to a different location. This
-             would solve the duplicate code problem without causing too much of a mess.
+LEFT OFF AT: Fix all problems in GameLogic.java by routing them through ModuleGateway.java

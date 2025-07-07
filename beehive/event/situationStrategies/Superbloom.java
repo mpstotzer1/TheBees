@@ -1,14 +1,15 @@
 package beehive.event.situationStrategies;
 
-import beehive.Hive;
+import beehive.GameLogic;
+import beehive.ModuleGateway;
 
 public class Superbloom implements Strategy{
 
-    public void doOnce(int duration, Hive hive){
-        hive.getJobInfo().getForagerNectar().addProdMod(duration, 2.0);
-        hive.getJobInfo().getForagerPollen().addProdMod(duration, 2.0);
+    public void doOnce(int duration, GameLogic gameLogic){
+        ModuleGateway.getJobInfo().getForagerNectar().addProdMod(duration, 2.0);
+        ModuleGateway.getJobInfo().getForagerPollen().addProdMod(duration, 2.0);
     }
-    public void doContinuous(Hive hive){
+    public void doContinuous(GameLogic gameLogic){
         //Nothing
     }
 }

@@ -1,8 +1,8 @@
 package beehive.event.situationStrategies;
 
-import beehive.Hive;
+import beehive.GameLogic;
 
 public interface Strategy {
-    public void doOnce(int duration, Hive hive);
-    public void doContinuous(Hive hive);
+    public void doOnce(int duration, GameLogic gameLogic);
+    public void doContinuous(GameLogic gameLogic);
 }

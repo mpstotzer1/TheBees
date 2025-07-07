@@ -1,14 +1,14 @@
 package beehive.event.situationStrategies;
 
-import beehive.Hive;
+import beehive.GameLogic;
 
 public class Nothing implements Strategy {
 
-    public void doOnce(int duration, Hive hive) {
+    public void doOnce(int duration, GameLogic gameLogic) {
         //Do nothing
     }
 
-    public void doContinuous(Hive hive) {
+    public void doContinuous(GameLogic gameLogic) {
         //Do nothing
     }
 }

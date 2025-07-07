@@ -19,7 +19,7 @@ import java.util.HashMap;
 
 public class Initializer{
 
-    public Hive createHive(){
+    public void initializeModuleGateway(){
 		HashMap<String, Double> upgrades = initializeUpgrades();
 		Resources resources = initializeResources();
 		ResourceData resourceData = initializeResourceData();
@@ -30,12 +30,8 @@ public class Initializer{
 		MiscData miscData = initializeMiscData();
 		JobInfo jobInfo = initializeJobs(resources, departmentInfo, temperatureInfo, miscData, upgrades);
 
-		Hive hive = new Hive(resources, resourceData, temperatureInfo, worldInfo, departmentInfo, jobInfo, situationData, upgrades, miscData);
-
-		departmentInfo.adjustBeesEverywhere(400);
-
-    	return hive;
-    }
+		ModuleGateway.initialize(resources, resourceData, temperatureInfo, worldInfo, departmentInfo, jobInfo, situationData, upgrades, miscData);
+	}
 
 	private ResourceData initializeResourceData() {
 		ResourceData temp = new ResourceData(20, 20);
