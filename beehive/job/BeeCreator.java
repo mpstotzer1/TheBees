@@ -1,8 +1,7 @@
 package beehive.job;
 
-import beehive.Logger;
+import beehive.logger.Logger;
 import beehive.MiscData;
-import beehive.department.Department;
 import beehive.department.DepartmentInfo;
 import beehive.resource.Resources;
 import beehive.temperature.TemperatureInfo;
@@ -29,7 +28,6 @@ public class BeeCreator extends Job{
             int beesToAdd = calcNumBeesToAdd();
             departmentInfo.adjustBeesEverywhere(beesToAdd); //DEBUG
             //hive.addBeesToCluster(beesToAdd);  //DEBUG
-            Logger.log("Number bees to be produced: " + beesToAdd);
 
             int pollenCost = simpleRound(beesToAdd / modifiers.calcProdMultiplier());
             resources.pollen().sub(pollenCost);
@@ -41,7 +39,7 @@ public class BeeCreator extends Job{
         double maxBroodTemp = TemperatureRegulationRanges.BROOD.getMaxTemperature();
 
         boolean insideBroodRange = (minBroodTemp <= hiveTemp && hiveTemp <= maxBroodTemp);
-        Logger.log("Inside Brood Range: " + insideBroodRange);
+        Logger.logTemperatureDebugging("Inside Brood Range: " + insideBroodRange);
 
         return insideBroodRange;
     }

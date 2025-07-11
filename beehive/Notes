@@ -26,4 +26,4 @@ Fragilities:
     -Occurrence handling methods full of hard-coded values
 
 
-LEFT OFF AT: Fix all problems in GameLogic.java by routing them through ModuleGateway.java
+LEFT OFF AT:

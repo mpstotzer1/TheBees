@@ -1,6 +1,6 @@
 package beehive;
 
-import beehive.department.Department;
+import beehive.logger.Logger;
 
 import java.util.concurrent.TimeUnit;
 
@@ -17,13 +17,12 @@ public class Runner{
 
 		int debugCounter = 0;
 
-		while(!(gameLogic.getGameLost()) && debugCounter < 360 ){
+		while(!(gameLogic.getGameLost()) && debugCounter < 50 ){
 			gameLogic.update();
 
-			Logger.log("Current Hive temp: " + ModuleGateway.getTemperatureInfo().getHiveTemp());
-			Logger.log("-------------Hive updated-------------");
-
-			//gameLogic.toString();
+			Logger.logTemperatureDebugging("Current Hive temp: " + ModuleGateway.getTemperatureInfo().getHiveTemp());
+			Logger.logBeePopulation("Total Bees: " + ModuleGateway.getDepartmentInfo().getTotalBees());
+			Logger.logLogicUpdate("-------------Game Logic Updated-------------");
 
 			TimeUnit.MILLISECONDS.sleep(10);
 			debugCounter++;

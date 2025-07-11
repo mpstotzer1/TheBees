@@ -4,6 +4,7 @@ import java.util.Random;
 
 import beehive.event.Situation;
 import beehive.job.Job;
+import beehive.logger.Logger;
 import beehive.resource.PotentResource;
 import beehive.resource.Resource;
 import beehive.world.SeasonType;
@@ -88,6 +89,7 @@ public class GameLogic {
 	private double calcHowMuchHiveTempChangesInResponseToCurrentWorldTemp(){
 		double deltaTemp = ModuleGateway.getWorldInfo().getWorldTemp() - ModuleGateway.getTemperatureInfo().getHiveTemp();
 		deltaTemp *= .1;
+		Logger.logTemperatureDebugging("Temperature Change from Weather: " + deltaTemp);
 		return deltaTemp;
 	}
 
@@ -99,12 +101,11 @@ public class GameLogic {
 		double heatGenerated = 0;
 		for(Job job: ModuleGateway.getJobInfo().getAllJobs()){ heatGenerated += job.calcHeat(); }
 		ModuleGateway.getTemperatureInfo().changeHiveTemp(heatGenerated);
-		Logger.log("Heat Generated: " + heatGenerated);
+		Logger.logTemperatureDebugging("Heat Generated: " + heatGenerated);
 
 		int foodCost = 0;
 		for(Job job: ModuleGateway.getJobInfo().getAllJobs()){ foodCost += job.calcFoodCost(); }
 		subFood(foodCost);
-		Logger.log("FoodCost: " + foodCost);
 
 		ModuleGateway.getJobInfo().getHiveTemperatureRegulator().work();
 
@@ -121,7 +122,6 @@ public class GameLogic {
 
 		if(remainingDeficit > 0){
 			int beesToKill = (int)(remainingDeficit * ModuleGateway.getUpgrades().get("starvationMult"));
-			Logger.log(beesToKill + " bees are about to be killed via starvation");
 			ModuleGateway.getDepartmentInfo().killBees(beesToKill);
 			// Do NOT throw starvation warning here!
 		}
@@ -182,7 +182,6 @@ public class GameLogic {
 			int beesToKill = lowHygieneLimit - amountHygiene;
 			ModuleGateway.getDepartmentInfo().killBees(beesToKill);
 
-			Logger.log(beesToKill + " bees killed via hygiene");
 			//The number of bees killed by this is NOT tested or fine-tuned. Fix this after testing
 		}
 	}
@@ -200,7 +199,7 @@ public class GameLogic {
 		if(currentHiveTemp < 55 || currentHiveTemp > 113){
 			ModuleGateway.getDepartmentInfo().killPercentBees(3.0);
 
-			Logger.log((ModuleGateway.getDepartmentInfo().getTotalBees() * .03) + " bees killed via temperature");
+			Logger.logTemperatureDebugging((ModuleGateway.getDepartmentInfo().getTotalBees() * .03) + " bees killed via temperature");
 		}
 	}
 	private void addProdModToAllJobs(int duration, double modifier){
@@ -240,7 +239,6 @@ public class GameLogic {
 				ModuleGateway.getResources().nectar().subPercent(.10);
 			}
 
-			Logger.log("Predator attacked");
 		}
 	}
 	private int calcChanceAttacked(){
@@ -268,7 +266,6 @@ public class GameLogic {
 			Situation temp = ModuleGateway.getSituationData().getAllSituations().get(randIndex);
 			ModuleGateway.getSituationData().getCurrentSituations().add(temp);
 
-			Logger.log("Situation Happened");
 		}
 	}
 	private boolean situationHappened(){

@@ -1,5 +1,6 @@
 package beehive.job;
 
+import beehive.logger.Logger;
 import beehive.temperature.TemperatureInfo;
 
 import java.util.HashMap;
@@ -17,6 +18,7 @@ public class HiveTemperatureRegulator extends Job{
     protected void workOverride(){
         double tempAdjustment = calcTempAdjustment();
         temperatureInfo.changeHiveTemp(tempAdjustment);
+        Logger.logTemperatureDebugging("Temperature Regulation Adjustment: " + tempAdjustment);
     }
     private double calcTempAdjustment(){
         if(hiveTooHot()){
