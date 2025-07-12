@@ -17,7 +17,7 @@ public class Runner{
 
 		int debugCounter = 0;
 
-		while(!(gameLogic.getGameLost()) && debugCounter < 50 ){
+		while(!(gameLogic.getGameLost()) && debugCounter < 482 ){
 			gameLogic.update();
 
 			Logger.logTemperatureDebugging("Current Hive temp: " + ModuleGateway.getTemperatureInfo().getHiveTemp());

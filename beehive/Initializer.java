@@ -15,19 +15,18 @@ import beehive.world.Season;
 import beehive.world.WorldInfo;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Initializer{
 
     public void initializeModuleGateway(){
-		HashMap<String, Double> upgrades = initializeUpgrades();
+		Upgrades upgrades = initializeUpgrades();
 		Resources resources = initializeResources();
 		ResourceData resourceData = initializeResourceData();
 		TemperatureInfo temperatureInfo = initializeTemperature();
-		WorldInfo worldInfo = initializeWorld();
+		MiscData miscData = initializeMiscData();
+		WorldInfo worldInfo = initializeWorld(miscData);
 		DepartmentInfo departmentInfo = initializeDepartments();
 		SituationData situationData = initializeSituations();
-		MiscData miscData = initializeMiscData();
 		JobInfo jobInfo = initializeJobs(resources, departmentInfo, temperatureInfo, miscData, upgrades);
 
 		ModuleGateway.initialize(resources, resourceData, temperatureInfo, worldInfo, departmentInfo, jobInfo, situationData, upgrades, miscData);
@@ -48,11 +47,11 @@ public class Initializer{
 		Department drone = new Department();
 		Department cluster = new Department();
 
-		DepartmentInfo temp = new DepartmentInfo(nurse, forager, guard, waxMason, houseBee, fanner, drone, cluster);
+		DepartmentInfo temp = new DepartmentInfo(nurse, forager, guard, waxMason, houseBee, fanner, cluster, drone);
 
 		return temp;
 	}
-	private JobInfo initializeJobs(Resources resources, DepartmentInfo departments, TemperatureInfo temperatureInfo, MiscData miscData, HashMap<String, Double> upgrades) {
+	private JobInfo initializeJobs(Resources resources, DepartmentInfo departments, TemperatureInfo temperatureInfo, MiscData miscData, Upgrades upgrades) {
 		ResourceAddStrategy resourceAddStrategy = new ResourceAddStrategy();
 		ResourceSetStrategy resourceSetStrategy = new ResourceSetStrategy();
 		ResourceNullStrategy resourceNullStrategy = new ResourceNullStrategy();
@@ -80,8 +79,8 @@ public class Initializer{
 
 		return temp;
 	}
-	private WorldInfo initializeWorld() {
-		Season season = new Season();
+	private WorldInfo initializeWorld(MiscData miscData) {
+		Season season = new Season(miscData);
 		WorldInfo temp = new WorldInfo(season);
 
 		return temp;
@@ -106,32 +105,21 @@ public class Initializer{
 
 		return temp;
 	}
-	private HashMap<String, Double> initializeUpgrades() {
-		HashMap<String, Double> upgrades = new HashMap<String, Double>(){{}};
-
-		//Productivity upgrades for Jobs
-		upgrades.put("nurseQueenHealthProd", 1.0);
-		upgrades.put("foragerNectarProd", 1.0);
-		upgrades.put("foragerPollenProd", 1.0);
-		upgrades.put("guardStrengthProd", 1.0);
-		upgrades.put("waxMasonWaxProd", 1.0);
-		upgrades.put("houseBeeHygieneProd", 1.0);
-		upgrades.put("fannerHoneyProd", 1.0);
-		upgrades.put("droneXPProd", 1.0);
-		//Decrease food costs globally
-		upgrades.put("foodCostMult", 1.0);
-		//Insulate hive from temperature fluctuations
-		upgrades.put("insulation", 1.0);
-		//Increase Strength
-		upgrades.put("strengthMult", 1.0);
-		//Make Occurrences less disastrous? Or less likely?
-		//Make seasons better(more flowers?)
-		upgrades.put("flowerMult", 1.0);
-		//Kill fewer bees from starvation
-		upgrades.put("starvationMult", 1.0);
-		//(Adjustable) nursery costs
-		upgrades.put("droneCost", 80.0);
-		upgrades.put("workerCost", 60.0);
+	private Upgrades initializeUpgrades() {
+		Upgrades upgrades = new Upgrades(
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0);
 
 		return upgrades;
 	}
@@ -166,7 +154,7 @@ public class Initializer{
 		return temp;
 	}
 	private MiscData initializeMiscData(){
-		MiscData temp = new MiscData(15);
+		MiscData temp = new MiscData(15, 0.4, 120);
 
 		return temp;
 	}

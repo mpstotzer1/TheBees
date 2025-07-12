@@ -1,18 +1,17 @@
-NOTE:	The Occurrences have a lot of flexibility. Make the most out of it with fun and
+NOTE:	The Occurrences have a staggering amount of flexibility. Make the most out of it with fun and
 		unique buffs/debuffs, status effects, etc.
 NOTE:	Newly-created bees are added to the cluster department
 NOTE:   1 tick = 1/2 second
 
 
 TO DO:
-        -Refactor droneXP to NOT be a DepartmentJob
-        -Look at upgrades hashmap. Consider replacing with a Record class
         -Refactor winter
-        -Get upgrades figured out, get constants figured out
+        -Prune and test which upgrades are to keep (most of them unused right now)
         -Figure out how to throw warnings to the player
 
 
 CONSIDERATIONS:
+    -Create an "on track to survive the winter" flag for the player
 	-Make the bad eventModifier/event/states more interesting than "some bees died"?
 	-Reduce the complexity of occurrences to only a FEW bad things that are influenced by
 	 the gameLogic's variables (strength, hygiene, etc.)?
@@ -21,9 +20,11 @@ CONSIDERATIONS:
 
 
 Fragilities:
-    -Value for winterFoodCost (in updateWinter() in Hive) is hardcoded into the source code
     -The equations in occurrences (and possibly elsewhere) can have a div0 error
     -Occurrence handling methods full of hard-coded values
 
 
-LEFT OFF AT:
+LEFT OFF AT: AHH! The service locator has turned! (I accidentally used it in the constructor for something (maybe Season)
+                    but the SL hadn't been initialized at that point and I got a nullptr exception. To fix this, maybe
+                    go full dependency injection and try to really isolate the various modules (entities, whatever) so
+                    that they need less dependence on other modules)

@@ -9,42 +9,45 @@ public class DepartmentInfo {
 	private Department waxMason;
 	private Department houseBee;
 	private Department fanner;
-	private Department drone;
 	private Department cluster;
-    private ArrayList<Department> departments = new ArrayList<Department>();
+	private Department drone;
+    private ArrayList<Department> allDepartments = new ArrayList<Department>();
+	private ArrayList<Department> workerDepartments = new ArrayList<Department>();
 
     public DepartmentInfo(Department nurse, Department forager, Department guard, Department waxMason,
-			Department houseBee, Department fanner, Department drone, Department cluster) {
+			Department houseBee, Department fanner, Department cluster, Department drone) {
 		this.nurse = nurse;
 		this.forager = forager;
 		this.guard = guard;
 		this.waxMason = waxMason;
 		this.houseBee = houseBee;
 		this.fanner = fanner;
-		this.drone = drone;
 		this.cluster = cluster;
+		this.drone = drone;
 
-		departments.add(nurse);
-		departments.add(forager);
-		departments.add(guard);
-		departments.add(waxMason);
-		departments.add(houseBee);
-		departments.add(fanner);
-		departments.add(drone);
-		departments.add(cluster);
+		workerDepartments.add(nurse);
+		workerDepartments.add(forager);
+		workerDepartments.add(guard);
+		workerDepartments.add(waxMason);
+		workerDepartments.add(houseBee);
+		workerDepartments.add(fanner);
+		workerDepartments.add(cluster);
+
+		allDepartments.addAll(workerDepartments);
+		allDepartments.add(drone);
 	}
 
 
 	public void adjustBeesEverywhere(int numBees){
-		int numDepartments = departments.size();
+		int numDepartments = workerDepartments.size();
 		int remainder = numBees % numDepartments;
 		int beesToAddPerDepartment = (numBees - remainder) / numDepartments;
 
-		for(Department dept: departments){
+		for(Department dept: workerDepartments){
 			dept.adjustBees(beesToAddPerDepartment);
 		}
 
-		for(Department dept : departments){
+		for(Department dept : workerDepartments){
 			if(remainder <= 0){ break; }
 
 			dept.adjustBees(1);
@@ -69,7 +72,7 @@ public class DepartmentInfo {
 	}
 	public int getTotalBees(){
 		int total = 0;
-		for(Department dept: departments){
+		for(Department dept: allDepartments){
 			total += dept.getNumBees();
 		}
 		return total;
@@ -84,5 +87,5 @@ public class DepartmentInfo {
     public Department getFanner() { return fanner; }
     public Department getDrone() { return drone; }
     public Department getCluster() { return cluster; }
-    public ArrayList<Department> getDepartments() { return departments; }
+    //public ArrayList<Department> getDepartments() { return departments; }
 }

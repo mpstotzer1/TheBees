@@ -1,5 +1,6 @@
 package beehive.job;
 
+import beehive.Upgrades;
 import beehive.logger.Logger;
 import beehive.temperature.TemperatureInfo;
 
@@ -7,9 +8,9 @@ import java.util.HashMap;
 
 public class HiveTemperatureRegulator extends Job{
     private TemperatureInfo temperatureInfo;
-    private HashMap<String, Double> upgrades;
+    private Upgrades upgrades;
 
-    public HiveTemperatureRegulator(TemperatureInfo temperatureInfo, HashMap<String, Double> upgrades, double foodCostConstant, double heatConstant, double productionConstant){
+    public HiveTemperatureRegulator(TemperatureInfo temperatureInfo, Upgrades upgrades, double foodCostConstant, double heatConstant, double productionConstant){
         this.temperatureInfo = temperatureInfo;
         this.upgrades = upgrades;
         modifiers = new Modifiers(foodCostConstant, heatConstant, productionConstant);
@@ -61,7 +62,7 @@ public class HiveTemperatureRegulator extends Job{
         double tempAdjustmentAbsolute = Math.abs(calcTempAdjustment());
 
         double foodCost = tempAdjustmentAbsolute / modifiers.calcFoodMultiplier();
-        foodCost /= upgrades.get("insulation");
+        foodCost /= upgrades.insulation();
 
         return (int)(foodCost);
     }

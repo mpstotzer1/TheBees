@@ -8,7 +8,6 @@ import beehive.resource.Resources;
 import beehive.temperature.TemperatureInfo;
 import beehive.world.WorldInfo;
 
-import java.util.HashMap;
 
 public class ModuleGateway{
     private static Resources resources_;
@@ -18,7 +17,7 @@ public class ModuleGateway{
     private static DepartmentInfo departmentInfo_;
     private static JobInfo jobInfo_;
     private static SituationData situationData_;
-    private static HashMap<String, Double> upgrades_;
+    private static Upgrades upgrades_;
     private static MiscData miscData_;
 
     private ModuleGateway(){
@@ -32,7 +31,7 @@ public class ModuleGateway{
                 DepartmentInfo departmentInfo,
                 JobInfo jobInfo,
                 SituationData situationData,
-                HashMap<String, Double> upgrades,
+                Upgrades upgrades,
                 MiscData miscData){
         resources_ = resources;
         resourceData_ = resourceData;
@@ -50,7 +49,7 @@ public class ModuleGateway{
     public static TemperatureInfo getTemperatureInfo(){ return temperatureInfo_; }
     public static DepartmentInfo getDepartmentInfo(){ return departmentInfo_; }
     public static WorldInfo getWorldInfo(){ return worldInfo_; }
-    public static HashMap<String, Double> getUpgrades(){ return upgrades_; }
+    public static Upgrades getUpgrades(){ return upgrades_; }
     public static SituationData getSituationData(){ return situationData_; }
     public static ResourceData getResourceData(){ return resourceData_; }
     public static MiscData getMiscData(){ return miscData_; }

@@ -1,29 +1,30 @@
 package beehive.world;
 
+import beehive.MiscData;
+import beehive.ModuleGateway;
+
 import java.util.Random;
 
 public class Season{
+    private MiscData miscData;
     private SeasonType seasonType;
-    private int seasonLength;
+    private int seasonCounter;
     private double currentTemp;
 
-    public Season(){
+    public Season(MiscData miscData){
+        this.miscData = miscData;
         seasonType = SeasonType.SPRING;
-        setSeasonLength();
+        seasonCounter = miscData.seasonLength();
         currentTemp = calcAverageTemp();
     }
 
     public void update(){
         nudgeCurrentTemp();
-        seasonLength--;
-        if(seasonLength <= 0){
-            moveToNextSeason();
-            setSeasonLength();
+        seasonCounter--;
+        if(seasonCounter <= 0){
+            seasonType = getNextSeason();
+            seasonCounter = ModuleGateway.getMiscData().seasonLength();
         }
-    }
-
-    private void setSeasonLength(){
-        seasonLength = 120;
     }
     private void nudgeCurrentTemp(){
         if(currentTemp <= seasonType.getLowTemp()){
@@ -43,25 +44,17 @@ public class Season{
     private double calcAverageTemp(){
         return (seasonType.getHighTemp() + seasonType.getLowTemp()) / 2.0;
     }
-    private void moveToNextSeason(){
-        switch(seasonType){
-            case SPRING:
-                this.seasonType = SeasonType.SUMMER;
-                return;
-            case SUMMER:
-                seasonType = SeasonType.FALL;
-                return;
-            case FALL:
-                seasonType = SeasonType.WINTER;
-                return;
-            case WINTER:
-                seasonType = SeasonType.SPRING;
-                return;
-        }
+    private SeasonType getNextSeason(){
+        return switch(seasonType){
+            case SPRING -> SeasonType.SUMMER;
+            case SUMMER -> SeasonType.FALL;
+            case FALL -> SeasonType.WINTER;
+            case WINTER -> SeasonType.SPRING;
+        };
     }
 
     public SeasonType getSeasonType(){ return seasonType; }
-    public void setSeasonType(SeasonType seasonType){ this.seasonType = seasonType; }
+    //public void setSeasonType(SeasonType seasonType){ this.seasonType = seasonType; }
     public double getCurrentTemp() { return currentTemp; }
-    public int getDuration(){ return seasonLength; }
+    public int getSeasonCounter(){ return seasonCounter; }
 }

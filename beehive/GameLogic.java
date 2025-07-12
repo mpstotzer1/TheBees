@@ -11,65 +11,24 @@ import beehive.world.SeasonType;
 
 public class GameLogic {
 	private boolean gameLost;
+	private boolean isWinter;
 
 	public GameLogic(){
 		gameLost = false;
+		isWinter = (ModuleGateway.getWorldInfo().getSeason().getSeasonType() == SeasonType.WINTER);
 	}
-
 
 	public void update(){
 		if(ModuleGateway.getDepartmentInfo().getTotalBees() <= 0){
 			gameLost = true;
+
 			return;
 		}
 
-		updateSummer();
+		if(isWinter){ updateWinter(); }
+		else{ updateSummer(); }
 
-		//Maybe throw warnings/memos?
-
-		if(ModuleGateway.getWorldInfo().getSeason().getSeasonType() == SeasonType.WINTER){
-			updateWinter();
-		}
-	}
-	private void updateWinter() {
-
-//		//Speed up time (10-15x speed?)
-//		//Should have an on-track-to-survive-winter flag for the player the rest of the year
-//
-//		//Kill all the drones
-//		getDepartmentInfo().getDrone().killAllBees();
-//		//Don't clusterAllBees! Leave them "bee" and winter update, then if survived, all bees are back in their places
-//		//Empty situationData.getCurrentSituations()
-//		getSituationData().getCurrentSituations().clear();
-//		//Clear all modifiers
-//		for(Modifiable job: getAllJobs()){
-//			job.getModifiers().clearAllMods();
-//		}
-//		//Essentially give the beehive a clean slate
-//
-//		//Update method for winter
-//		//No events happen!
-//		//World, hive temperatures irrelevant
-//		//Drain all resources for seasonLength accordingly
-//		int durationWinter = getWorldInfo().getSeason().getDuration();
-//		//calculate foodCost of wintering hive (just be totalBees * someSmallConstant)
-//		double winterFoodCostCnst = 1.0;
-//		int foodCost = (int)(getTotalBees() * winterFoodCostCnst);
-//
-//		//subFood() for each tick
-//		subFood(foodCost);
-//
-//		durationWinter--;
-//
-//		//Change state to Active and season to SPRING
-//		if(durationWinter <= 0){
-//			getWorldInfo().getSeason().setSeasonType(SeasonType.SPRING);
-//		}
-//
-//
-//		if(getTotalBees() <= 0){
-//			setGameLost(true);
-//		}
+		//Maybe throw warnings/memos here?
 	}
 	public void updateSummer(){
 		updateWorld();
@@ -80,6 +39,37 @@ public class GameLogic {
 		if(ModuleGateway.getDepartmentInfo().getTotalBees() <= 0){
 			setGameLost(true);
 		}
+	}
+	private void updateWinter() {
+		//The firstDayOfSeason conditional MUST come before the call to worldInfo().update()
+		if(isFirstDayOfSeason()){
+			ModuleGateway.getDepartmentInfo().getDrone().killAllBees();
+			ModuleGateway.getSituationData().getCurrentSituations().clear();
+			for(Job job: ModuleGateway.getJobInfo().getAllJobs()){ job.getModifiers().clearAllMods(); }
+			ModuleGateway.getResources().nectar().setAmount(0);
+		}
+
+		updateWinterFood();
+		ModuleGateway.getWorldInfo().update();
+	}
+	private void updateWinterFood(){
+		int totalBees = ModuleGateway.getDepartmentInfo().getTotalBees();
+		double winterFoodCostConstant = ModuleGateway.getMiscData().winterFoodCost();
+
+		int foodCost = (int)(totalBees * winterFoodCostConstant);
+		subFood(foodCost);
+	}
+
+	private boolean isFirstDayOfSeason(){
+		int seasonCounter = ModuleGateway.getWorldInfo().getSeason().getSeasonCounter();
+		int seasonLength = ModuleGateway.getMiscData().seasonLength();
+
+		return (seasonCounter == seasonLength);
+	}
+	private boolean isLastDayOfSeason(){
+		int seasonCounter = ModuleGateway.getWorldInfo().getSeason().getSeasonCounter();
+
+		return (seasonCounter == 1);
 	}
 
 	private void updateWorld(){
@@ -121,7 +111,7 @@ public class GameLogic {
 		remainingDeficit = attemptDrainResource(honey, remainingDeficit);
 
 		if(remainingDeficit > 0){
-			int beesToKill = (int)(remainingDeficit * ModuleGateway.getUpgrades().get("starvationMult"));
+			int beesToKill = (int)(remainingDeficit * ModuleGateway.getUpgrades().starvationMult());
 			ModuleGateway.getDepartmentInfo().killBees(beesToKill);
 			// Do NOT throw starvation warning here!
 		}
@@ -245,7 +235,7 @@ public class GameLogic {
 		//chanceAttacked is a linear equation; more strength and higher guardBees-to-totalBees = less chance of attack
 		double percentGuard = ModuleGateway.getDepartmentInfo().getGuard().getNumBees() / ModuleGateway.getDepartmentInfo().getTotalBees();
 		int amountStrength = ModuleGateway.getResources().strength().getAmount();
-		double strengthMult = ModuleGateway.getUpgrades().get("strengthMult");
+		double strengthMult = ModuleGateway.getUpgrades().strengthMult();
 
 		return (int)(-1 * percentGuard * (amountStrength * strengthMult + 100));
 	}
