@@ -4,7 +4,6 @@ import beehive.Upgrades;
 import beehive.logger.Logger;
 import beehive.temperature.TemperatureInfo;
 
-import java.util.HashMap;
 
 public class HiveTemperatureRegulator extends Job{
     private TemperatureInfo temperatureInfo;
@@ -13,12 +12,14 @@ public class HiveTemperatureRegulator extends Job{
     public HiveTemperatureRegulator(TemperatureInfo temperatureInfo, Upgrades upgrades, double foodCostConstant, double heatConstant, double productionConstant){
         this.temperatureInfo = temperatureInfo;
         this.upgrades = upgrades;
-        modifiers = new Modifiers(foodCostConstant, heatConstant, productionConstant);
+
+        initializeModifiers(foodCostConstant, heatConstant, productionConstant);
     }
 
     protected void workOverride(){
         double tempAdjustment = calcTempAdjustment();
         temperatureInfo.changeHiveTemp(tempAdjustment);
+
         Logger.logTemperatureDebugging("Temperature Regulation Adjustment: " + tempAdjustment);
     }
     private double calcTempAdjustment(){
@@ -27,7 +28,7 @@ public class HiveTemperatureRegulator extends Job{
         }else if(hiveTooCold()){
             return clampToStep(minMinusHive());
         }
-        return 0;
+        return 0.0;
     }
     private boolean hiveTooHot(){
         return (temperatureInfo.getHiveTemp() > temperatureInfo.getTemperatureRegulationRanges().getMaxTemperature());
@@ -48,7 +49,7 @@ public class HiveTemperatureRegulator extends Job{
         return (minTemp - currentHiveTemp);
     }
     private double clampToStep(double tempChange) {
-        double step = temperatureInfo.getTempRegulationStep();
+        double step = temperatureInfo.getTempRegulationStep() * prodMods.calcMultiplier();
 
         if(Math.abs(tempChange) < step){
             return tempChange;
@@ -60,16 +61,15 @@ public class HiveTemperatureRegulator extends Job{
 
     public int calcFoodCost(){
         double tempAdjustmentAbsolute = Math.abs(calcTempAdjustment());
+        double modCnst = foodMods.calcMultiplier() / upgrades.insulation();
 
-        double foodCost = tempAdjustmentAbsolute / modifiers.calcFoodMultiplier();
-        foodCost /= upgrades.insulation();
-
-        return (int)(foodCost);
+        return (int)(tempAdjustmentAbsolute * modCnst);
     }
 
     public double calcHeat(){
-        double heatMod = modifiers.calcHeatMultiplier();
+        double tempAdjustmentAbsolute = Math.abs(calcTempAdjustment());
+        double heatMod = heatMods.calcMultiplier();
 
-        return calcTempAdjustment() * heatMod;
+        return tempAdjustmentAbsolute * heatMod;
     }
 }

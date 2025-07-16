@@ -28,3 +28,8 @@ LEFT OFF AT: AHH! The service locator has turned! (I accidentally used it in the
                     but the SL hadn't been initialized at that point and I got a nullptr exception. To fix this, maybe
                     go full dependency injection and try to really isolate the various modules (entities, whatever) so
                     that they need less dependence on other modules)
+
+            Fixing Service Locator (Module Gateway)
+                Isolating modules (go through each and list dependencies)
+                    Refactoring Modifiers into ModifierList
+                        Situation strategies all need to be fixed because of this

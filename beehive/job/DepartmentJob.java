@@ -13,7 +13,8 @@ public class DepartmentJob extends Job{
 		this.resource = resource;
 		this.resourceAdjustStrategy = resourceAdjustStrategy;
 		this.department = department;
-		modifiers = new Modifiers(foodCostConstant, heatConstant, productionConstant);
+
+		initializeModifiers(foodCostConstant, heatConstant, productionConstant);
 	}
 
 	protected void workOverride(){
@@ -22,12 +23,12 @@ public class DepartmentJob extends Job{
 		resourceAdjustStrategy.execute(resource, amountResourceProduced);
 	}
 	public int calcProduction(){
-		return (int)(department.getNumBees() * modifiers.calcProdMultiplier());
+		return (int)(department.getNumBees() * prodMods.calcMultiplier());
 	}
 	public int calcFoodCost(){
-		return (int)(department.getNumBees() * modifiers.calcFoodMultiplier());
+		return (int)(department.getNumBees() * foodMods.calcMultiplier());
 	}
 	public double calcHeat(){
-		return department.getNumBees() * modifiers.calcHeatMultiplier();
+		return department.getNumBees() * heatMods.calcMultiplier();
 	}
 }

@@ -45,7 +45,7 @@ public class GameLogic {
 		if(isFirstDayOfSeason()){
 			ModuleGateway.getDepartmentInfo().getDrone().killAllBees();
 			ModuleGateway.getSituationData().getCurrentSituations().clear();
-			for(Job job: ModuleGateway.getJobInfo().getAllJobs()){ job.getModifiers().clearAllMods(); }
+			for(Job job: ModuleGateway.getJobInfo().getAllJobs()){ job.clearAllModifierLists(); }
 			ModuleGateway.getResources().nectar().setAmount(0);
 		}
 
@@ -194,7 +194,7 @@ public class GameLogic {
 	}
 	private void addProdModToAllJobs(int duration, double modifier){
 		for(Job job: ModuleGateway.getJobInfo().getAllJobs()){
-			job.getModifiers().addProdMod(duration, modifier);
+			job.getProdMod().addMod(duration, modifier);
 		}
 	}
 
@@ -214,7 +214,7 @@ public class GameLogic {
 			}else if(randPredator == 1){//Wasps--only in summer?
 				ModuleGateway.getResources().honey().setAmount( (int)(ModuleGateway.getResources().honey().getAmount() / 2) );
 				ModuleGateway.getDepartmentInfo().killPercentBees(2);
-				ModuleGateway.getJobInfo().getBeeCreator().getModifiers().addProdMod(40, .5);
+				ModuleGateway.getJobInfo().getBeeCreator().getProdMod().addMod(40, .5);
 			}else if(randPredator == 2){//Hornets
 				ModuleGateway.getDepartmentInfo().killPercentBees(7);
 			}else if(randPredator == 3){//Mice--only in winter?

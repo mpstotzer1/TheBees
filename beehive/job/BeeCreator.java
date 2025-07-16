@@ -20,7 +20,7 @@ public class BeeCreator extends Job{
         this.miscData = miscData;
         this.departmentInfo = departmentInfo;
 
-        modifiers = new Modifiers(foodCostConstant, heatConstant, productionConstant);
+        initializeModifiers(foodCostConstant, heatConstant, productionConstant);
     }
 
     protected void workOverride(){
@@ -29,7 +29,7 @@ public class BeeCreator extends Job{
             departmentInfo.adjustBeesEverywhere(beesToAdd); //DEBUG
             //hive.addBeesToCluster(beesToAdd);  //DEBUG
 
-            int pollenCost = simpleRound(beesToAdd / modifiers.calcProdMultiplier());
+            int pollenCost = simpleRound(beesToAdd / prodMods.calcMultiplier());
             resources.pollen().sub(pollenCost);
         }
     }
@@ -44,7 +44,7 @@ public class BeeCreator extends Job{
         return insideBroodRange;
     }
     private int calcNumBeesToAdd(){
-        int maxBeesPossibleGivenPollen = (int)(resources.pollen().getAmount() * modifiers.calcProdMultiplier());
+        int maxBeesPossibleGivenPollen = (int)(resources.pollen().getAmount() * prodMods.calcMultiplier());
         int maxBeesProducedPerTick = miscData.maxNumBeesProducedPerTick();
 
         return Math.min(maxBeesPossibleGivenPollen, maxBeesProducedPerTick);
@@ -57,13 +57,13 @@ public class BeeCreator extends Job{
 
     public double calcHeat(){
         int beesProduced = calcNumBeesToAdd();
-        double heatMod = modifiers.calcHeatMultiplier();
+        double heatMod = heatMods.calcMultiplier();
 
         return beesProduced * heatMod;
     }
     public int calcFoodCost(){
         int beesProduced = calcNumBeesToAdd();
-        double foodMod = modifiers.calcFoodMultiplier();
+        double foodMod = foodMods.calcMultiplier();
 
         return (int)(beesProduced * foodMod);
     }

@@ -86,7 +86,7 @@ public class Initializer{
 		return temp;
 	}
 	private TemperatureInfo initializeTemperature() {
-		TemperatureInfo temp = new TemperatureInfo(12.5);
+		TemperatureInfo temp = new TemperatureInfo(5.0);
 
 		return temp;
 	}
