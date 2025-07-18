@@ -1,17 +1,17 @@
 package beehive.event.situationStrategies;
 
-import beehive.ModuleGateway;
+import beehive.HiveModuleContainer;
 
-public class Pesticide extends Strategy {
+public class Pesticide implements Strategy {
 
-    public void doOnce(int duration){
-        ModuleGateway.getDepartmentInfo().killPercentBees(5.0);
-        ModuleGateway.getJobInfo().getForagerNectar().getProdMod().addMod(duration, .5);
-        ModuleGateway.getJobInfo().getForagerPollen().getProdMod().addMod(duration, .5);
-        ModuleGateway.getJobInfo().getHouseBeeHygiene().getProdMod().addMod(duration, .8);
+    public void doOnce(int duration, HiveModuleContainer hiveModuleContainer){
+        hiveModuleContainer.getDepartmentInfo().killPercentBees(5.0);
+        hiveModuleContainer.getJobInfo().getForagerNectar().getProdMod().addMod(duration, .5);
+        hiveModuleContainer.getJobInfo().getForagerPollen().getProdMod().addMod(duration, .5);
+        hiveModuleContainer.getJobInfo().getHouseBeeHygiene().getProdMod().addMod(duration, .8);
 
     }
-    public void doContinuous(){
-        ModuleGateway.getDepartmentInfo().killPercentBees(1.0);
+    public void doContinuous(HiveModuleContainer hiveModuleContainer){
+        hiveModuleContainer.getDepartmentInfo().killPercentBees(1.0);
     }
 }

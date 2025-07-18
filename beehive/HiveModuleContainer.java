@@ -9,7 +9,7 @@ import beehive.temperature.TemperatureInfo;
 import beehive.world.WorldInfo;
 
 
-public class LogicModuleContainer {
+public class HiveModuleContainer {
     private Resources resources;
     private ResourceData resourceData;
     private TemperatureInfo temperatureInfo;
@@ -20,15 +20,15 @@ public class LogicModuleContainer {
     private Upgrades upgrades;
     private MiscData miscData;
 
-    public LogicModuleContainer(Resources resources,
-                                  ResourceData resourceData,
-                                  TemperatureInfo temperatureInfo,
-                                  WorldInfo worldInfo,
-                                  DepartmentInfo departmentInfo,
-                                  JobInfo jobInfo,
-                                  SituationData situationData,
-                                  Upgrades upgrades,
-                                  MiscData miscData){
+    public HiveModuleContainer(Resources resources,
+                               ResourceData resourceData,
+                               TemperatureInfo temperatureInfo,
+                               WorldInfo worldInfo,
+                               DepartmentInfo departmentInfo,
+                               JobInfo jobInfo,
+                               SituationData situationData,
+                               Upgrades upgrades,
+                               MiscData miscData){
         this.resources = resources;
         this.resourceData = resourceData;
         this.temperatureInfo = temperatureInfo;

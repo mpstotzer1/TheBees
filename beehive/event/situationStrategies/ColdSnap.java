@@ -1,13 +1,15 @@
 package beehive.event.situationStrategies;
 
-public class ColdSnap extends Strategy{
+import beehive.HiveModuleContainer;
 
-    public void doOnce(int duration){
-        logicModuleContainer_.getJobInfo().getFannerHoney().getProdMod().addMod(duration,.65);
-        logicModuleContainer_.getJobInfo().getBeeCreator().getProdMod().addMod(duration, .85);
-        logicModuleContainer_.getJobInfo().getGuardStrength().getProdMod().addMod(duration, .85);
+public class ColdSnap implements Strategy{
+
+    public void doOnce(int duration, HiveModuleContainer hiveModuleContainer){
+        hiveModuleContainer.getJobInfo().getFannerHoney().getProdMod().addMod(duration,.65);
+        hiveModuleContainer.getJobInfo().getBeeCreator().getProdMod().addMod(duration, .85);
+        hiveModuleContainer.getJobInfo().getGuardStrength().getProdMod().addMod(duration, .85);
     }
-    public void doContinuous(){
-        logicModuleContainer_.getTemperatureInfo().changeHiveTemp(-0.3);
+    public void doContinuous(HiveModuleContainer hiveModuleContainer){
+        hiveModuleContainer.getTemperatureInfo().changeHiveTemp(-0.3);
     }
 }

@@ -1,16 +1,16 @@
 package beehive.event.situationStrategies;
 
-import beehive.ModuleGateway;
+import beehive.HiveModuleContainer;
 
 public class Disease implements Strategy{
 
-    public void doOnce(int duration){
-        ModuleGateway.getJobInfo().getForagerNectar().getProdMod().addMod(duration, .8);
-        ModuleGateway.getJobInfo().getForagerPollen().getProdMod().addMod(duration, .8);
-        ModuleGateway.getJobInfo().getBeeCreator().getProdMod().addMod(duration, .8);
-        ModuleGateway.getJobInfo().getGuardStrength().getProdMod().addMod(duration, .8);
+    public void doOnce(int duration, HiveModuleContainer hiveModuleContainer){
+        hiveModuleContainer.getJobInfo().getForagerNectar().getProdMod().addMod(duration, .8);
+        hiveModuleContainer.getJobInfo().getForagerPollen().getProdMod().addMod(duration, .8);
+        hiveModuleContainer.getJobInfo().getBeeCreator().getProdMod().addMod(duration, .8);
+        hiveModuleContainer.getJobInfo().getGuardStrength().getProdMod().addMod(duration, .8);
     }
-    public void doContinuous(){
-        ModuleGateway.getDepartmentInfo().killPercentBees(.75);
+    public void doContinuous(HiveModuleContainer hiveModuleContainer){
+        hiveModuleContainer.getDepartmentInfo().killPercentBees(.75);
     }
 }

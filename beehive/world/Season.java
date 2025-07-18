@@ -1,7 +1,6 @@
 package beehive.world;
 
 import beehive.MiscData;
-import beehive.ModuleGateway;
 
 import java.util.Random;
 
@@ -23,7 +22,7 @@ public class Season{
         seasonCounter--;
         if(seasonCounter <= 0){
             seasonType = getNextSeason();
-            seasonCounter = ModuleGateway.getMiscData().seasonLength();
+            seasonCounter = miscData.seasonLength();
         }
     }
     private void nudgeCurrentTemp(){

@@ -18,21 +18,7 @@ import java.util.ArrayList;
 
 public class Initializer{
 
-//    public void initializeModuleGateway(){
-//		Upgrades upgrades = initializeUpgrades();
-//		Resources resources = initializeResources();
-//		ResourceData resourceData = initializeResourceData();
-//		TemperatureInfo temperatureInfo = initializeTemperature();
-//		MiscData miscData = initializeMiscData();
-//		WorldInfo worldInfo = initializeWorld(miscData);
-//		DepartmentInfo departmentInfo = initializeDepartments();
-//		SituationData situationData = initializeSituations();
-//		JobInfo jobInfo = initializeJobs(resources, departmentInfo, temperatureInfo, miscData, upgrades);
-//
-//		ModuleGateway.initialize(resources, resourceData, temperatureInfo, worldInfo, departmentInfo, jobInfo, situationData, upgrades, miscData);
-//	}
-
-	public LogicModuleContainer initializeLogicModuleLocator(){
+	public Hive initializeHive(){
 		Upgrades upgrades = initializeUpgrades();
 		Resources resources = initializeResources();
 		ResourceData resourceData = initializeResourceData();
@@ -43,10 +29,10 @@ public class Initializer{
 		SituationData situationData = initializeSituations();
 		JobInfo jobInfo = initializeJobs(resources, departmentInfo, temperatureInfo, miscData, upgrades);
 
-		LogicModuleContainer temp = new LogicModuleContainer(resources, resourceData, temperatureInfo, worldInfo, departmentInfo, jobInfo, situationData, upgrades, miscData);
-		Strategy.setLogicModuleContainer(temp);
+		HiveModuleContainer hiveModuleContainer = new HiveModuleContainer(resources, resourceData, temperatureInfo, worldInfo, departmentInfo, jobInfo, situationData, upgrades, miscData);
+		departmentInfo.adjustBeesEverywhere(400);
 
-		return temp;
+        return new Hive(hiveModuleContainer);
 	}
 
 	private ResourceData initializeResourceData() {

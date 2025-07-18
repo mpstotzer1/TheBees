@@ -8,6 +8,7 @@ TO DO:
         -Refactor winter
         -Prune and test which upgrades are to keep (most of them unused right now)
         -Figure out how to throw warnings to the player
+        -Make ColdSnap and HeatWave adjust the world temperature too
 
 
 CONSIDERATIONS:
@@ -22,6 +23,7 @@ CONSIDERATIONS:
 Fragilities:
     -The equations in occurrences (and possibly elsewhere) can have a div0 error if the number of bees is zero
     -Occurrence handling methods full of hard-coded values
+    -Magic number of 400 bees added to Hive during the initializeHive() method
 
 
 LEFT OFF AT: AHH! The service locator has turned! (I accidentally used it in the constructor for something (maybe Season)
@@ -29,7 +31,4 @@ LEFT OFF AT: AHH! The service locator has turned! (I accidentally used it in the
                     go full dependency injection and try to really isolate the various modules (entities, whatever) so
                     that they need less dependence on other modules)
 
-            Fixing Service Locator (Module Gateway)
-                Isolating modules (go through each and list dependencies)
-                    Removing ModuleGateway
-                        Changing all situation strategies to depend on LogicModuleContainer instead of ModuleGateway
+            Adjusting initializer values so that temperatures are normal again
