@@ -1,5 +1,5 @@
 package beehive.job;
-//Situations are periods of time that change the hive's variables (like faster wax production, or decreased strength)
+
 public class TimedModifier {
 	private int countdown;
 	private double modifier;

@@ -1,8 +1,14 @@
 package beehive.event.situationStrategies;
 
-import beehive.GameLogic;
+import beehive.LogicModuleContainer;
 
-public interface Strategy {
-    public void doOnce(int duration, GameLogic gameLogic);
-    public void doContinuous(GameLogic gameLogic);
+public abstract class Strategy {
+    static protected LogicModuleContainer logicModuleContainer_;
+
+    public static void setLogicModuleContainer(LogicModuleContainer logicModuleContainer){
+        logicModuleContainer_ = logicModuleContainer;
+    }
+
+    public abstract void doOnce(int duration);
+    public abstract void doContinuous();
 }

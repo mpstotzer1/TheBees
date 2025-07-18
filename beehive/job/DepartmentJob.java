@@ -10,11 +10,11 @@ public class DepartmentJob extends Job{
 
 	public DepartmentJob(Resource resource, ResourceAdjustStrategy resourceAdjustStrategy, Department department,
 						 double foodCostConstant, double heatConstant, double productionConstant){
+		super(foodCostConstant, heatConstant, productionConstant);
+
 		this.resource = resource;
 		this.resourceAdjustStrategy = resourceAdjustStrategy;
 		this.department = department;
-
-		initializeModifiers(foodCostConstant, heatConstant, productionConstant);
 	}
 
 	protected void workOverride(){

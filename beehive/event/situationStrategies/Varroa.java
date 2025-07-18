@@ -1,17 +1,16 @@
 package beehive.event.situationStrategies;
 
-import beehive.GameLogic;
 import beehive.ModuleGateway;
 
 public class Varroa implements Strategy {
 
-    public void doOnce(int duration, GameLogic gameLogic){
-        ModuleGateway.getJobInfo().getBeeCreator().addProdMod(duration, .5);
-        ModuleGateway.getJobInfo().getNurseQueenHealth().addProdMod(duration, .75);
-        ModuleGateway.getJobInfo().getHouseBeeHygiene().addFoodMod(duration, 1.5);
-        ModuleGateway.getJobInfo().getHouseBeeHygiene().addHeatMod(duration, 1.5);
+    public void doOnce(int duration){
+        ModuleGateway.getJobInfo().getBeeCreator().getProdMod().addMod(duration, .5);
+        ModuleGateway.getJobInfo().getNurseQueenHealth().getProdMod().addMod(duration, .75);
+        ModuleGateway.getJobInfo().getHouseBeeHygiene().getFoodMod().addMod(duration, 1.5);
+        ModuleGateway.getJobInfo().getHouseBeeHygiene().getHeatMod().addMod(duration, 1.5);
     }
-    public void doContinuous(GameLogic gameLogic){
+    public void doContinuous(){
         ModuleGateway.getDepartmentInfo().killPercentBees(2.0);
     }
 }

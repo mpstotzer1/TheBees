@@ -5,11 +5,12 @@ public abstract class Job{
     protected ModifierList foodMods;
     protected ModifierList heatMods;
 
-    public void initializeModifiers(double prodCnst, double foodCnst, double heatCnst){
-        prodMods.setConstant(prodCnst);
-        foodMods.setConstant(foodCnst);
-        heatMods.setConstant(heatCnst);
+    protected Job(double productionConstant, double foodCostConstant, double heatConstant){
+        prodMods = new ModifierList(productionConstant);
+        foodMods = new ModifierList(foodCostConstant);
+        heatMods = new ModifierList(heatConstant);
     }
+
     public void work(){
         workOverride();
         prodMods.update();

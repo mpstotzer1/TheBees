@@ -6,7 +6,7 @@ public class ResourceSetStrategy implements ResourceAdjustStrategy {
 
     public ResourceSetStrategy(){}
 
-    public void execute(Resource resource, int production){
-        resource.setAmount(production);
+    public void execute(Resource resource, int amount){
+        resource.setAmount(amount);
     }
 }

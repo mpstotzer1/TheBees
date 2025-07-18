@@ -3,24 +3,24 @@ package beehive.job;
 import beehive.logger.Logger;
 import beehive.MiscData;
 import beehive.department.DepartmentInfo;
-import beehive.resource.Resources;
+import beehive.resource.Resource;
 import beehive.temperature.TemperatureInfo;
 import beehive.temperature.TemperatureRegulationRanges;
 
 public class BeeCreator extends Job{
-    private Resources resources;
+    private Resource pollen;
     private TemperatureInfo temperatureInfo;
     private MiscData miscData;
     private DepartmentInfo departmentInfo;
 
-    public BeeCreator(Resources resources, TemperatureInfo temperatureInfo, MiscData miscData, DepartmentInfo departmentInfo,
+    public BeeCreator(Resource pollen, TemperatureInfo temperatureInfo, MiscData miscData, DepartmentInfo departmentInfo,
                       double foodCostConstant, double heatConstant, double productionConstant) {
-        this.resources = resources;
+        super(foodCostConstant, heatConstant, productionConstant);
+
+        this.pollen = pollen;
         this.temperatureInfo = temperatureInfo;
         this.miscData = miscData;
         this.departmentInfo = departmentInfo;
-
-        initializeModifiers(foodCostConstant, heatConstant, productionConstant);
     }
 
     protected void workOverride(){
@@ -30,7 +30,7 @@ public class BeeCreator extends Job{
             //hive.addBeesToCluster(beesToAdd);  //DEBUG
 
             int pollenCost = simpleRound(beesToAdd / prodMods.calcMultiplier());
-            resources.pollen().sub(pollenCost);
+            pollen.sub(pollenCost);
         }
     }
     private boolean insideBroodTempRange(){
@@ -44,7 +44,7 @@ public class BeeCreator extends Job{
         return insideBroodRange;
     }
     private int calcNumBeesToAdd(){
-        int maxBeesPossibleGivenPollen = (int)(resources.pollen().getAmount() * prodMods.calcMultiplier());
+        int maxBeesPossibleGivenPollen = (int)(pollen.getAmount() * prodMods.calcMultiplier());
         int maxBeesProducedPerTick = miscData.maxNumBeesProducedPerTick();
 
         return Math.min(maxBeesPossibleGivenPollen, maxBeesProducedPerTick);

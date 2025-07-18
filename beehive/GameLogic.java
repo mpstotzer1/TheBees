@@ -233,7 +233,9 @@ public class GameLogic {
 	}
 	private int calcChanceAttacked(){
 		//chanceAttacked is a linear equation; more strength and higher guardBees-to-totalBees = less chance of attack
-		double percentGuard = ModuleGateway.getDepartmentInfo().getGuard().getNumBees() / ModuleGateway.getDepartmentInfo().getTotalBees();
+		int numBees = ModuleGateway.getDepartmentInfo().getTotalBees();
+		if(numBees == 0){ numBees = 1; }
+		double percentGuard = ModuleGateway.getDepartmentInfo().getGuard().getNumBees() / numBees;
 		int amountStrength = ModuleGateway.getResources().strength().getAmount();
 		double strengthMult = ModuleGateway.getUpgrades().strengthMult();
 

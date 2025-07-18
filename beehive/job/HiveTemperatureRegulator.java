@@ -10,10 +10,10 @@ public class HiveTemperatureRegulator extends Job{
     private Upgrades upgrades;
 
     public HiveTemperatureRegulator(TemperatureInfo temperatureInfo, Upgrades upgrades, double foodCostConstant, double heatConstant, double productionConstant){
+        super(foodCostConstant, heatConstant, productionConstant);
+
         this.temperatureInfo = temperatureInfo;
         this.upgrades = upgrades;
-
-        initializeModifiers(foodCostConstant, heatConstant, productionConstant);
     }
 
     protected void workOverride(){

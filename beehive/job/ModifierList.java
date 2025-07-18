@@ -10,7 +10,6 @@ public class ModifierList {
     public ModifierList(double constant){
         this.constant = constant;
     }
-    public void setConstant(double constant) {this.constant = constant; }
 
     public void update(){
         Iterator<TimedModifier> iterator = timedModifiers.iterator();
@@ -25,8 +24,8 @@ public class ModifierList {
     public double calcMultiplier(){ return calcListMultiplier() * constant; }
     private double calcListMultiplier(){
         double multiplier = 1;
-        for(int i = 0; i < timedModifiers.size(); i++){
-            multiplier *= timedModifiers.get(i).getModifier();
+        for(TimedModifier timedModifier : timedModifiers){
+            multiplier *= timedModifier.getModifier();
         }
         return multiplier;
     }

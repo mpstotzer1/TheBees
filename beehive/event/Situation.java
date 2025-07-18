@@ -18,10 +18,10 @@ public class Situation {
     public final void update(GameLogic gameLogic){
         if(duration > 0){
             if(!doneOnce){
-                strategy.doOnce(duration, gameLogic);
+                strategy.doOnce(duration);
                 doneOnce = true;
             }else{
-                strategy.doContinuous(gameLogic);
+                strategy.doContinuous();
                 duration--;
             }
         }

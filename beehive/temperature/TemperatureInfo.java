@@ -19,5 +19,4 @@ public class TemperatureInfo {
 	public double getHiveTemp() { return hiveTemp; }
 	public TemperatureRegulationRanges getTemperatureRegulationRanges() { return temperatureRegulationRanges; }
 	public double getTempRegulationStep() { return tempRegulationStep; }
-
 }

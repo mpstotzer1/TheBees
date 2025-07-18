@@ -20,7 +20,7 @@ CONSIDERATIONS:
 
 
 Fragilities:
-    -The equations in occurrences (and possibly elsewhere) can have a div0 error
+    -The equations in occurrences (and possibly elsewhere) can have a div0 error if the number of bees is zero
     -Occurrence handling methods full of hard-coded values
 
 
@@ -31,5 +31,5 @@ LEFT OFF AT: AHH! The service locator has turned! (I accidentally used it in the
 
             Fixing Service Locator (Module Gateway)
                 Isolating modules (go through each and list dependencies)
-                    Refactoring Modifiers into ModifierList
-                        Situation strategies all need to be fixed because of this
+                    Removing ModuleGateway
+                        Changing all situation strategies to depend on LogicModuleContainer instead of ModuleGateway

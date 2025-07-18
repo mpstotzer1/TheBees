@@ -6,7 +6,7 @@ public class ResourceNullStrategy implements ResourceAdjustStrategy {
 
     public ResourceNullStrategy(){}
 
-    public void execute(Resource resource, int production){
+    public void execute(Resource resource, int amount){
         //Do nothing
     }
 }

@@ -18,7 +18,21 @@ import java.util.ArrayList;
 
 public class Initializer{
 
-    public void initializeModuleGateway(){
+//    public void initializeModuleGateway(){
+//		Upgrades upgrades = initializeUpgrades();
+//		Resources resources = initializeResources();
+//		ResourceData resourceData = initializeResourceData();
+//		TemperatureInfo temperatureInfo = initializeTemperature();
+//		MiscData miscData = initializeMiscData();
+//		WorldInfo worldInfo = initializeWorld(miscData);
+//		DepartmentInfo departmentInfo = initializeDepartments();
+//		SituationData situationData = initializeSituations();
+//		JobInfo jobInfo = initializeJobs(resources, departmentInfo, temperatureInfo, miscData, upgrades);
+//
+//		ModuleGateway.initialize(resources, resourceData, temperatureInfo, worldInfo, departmentInfo, jobInfo, situationData, upgrades, miscData);
+//	}
+
+	public LogicModuleContainer initializeLogicModuleLocator(){
 		Upgrades upgrades = initializeUpgrades();
 		Resources resources = initializeResources();
 		ResourceData resourceData = initializeResourceData();
@@ -29,7 +43,10 @@ public class Initializer{
 		SituationData situationData = initializeSituations();
 		JobInfo jobInfo = initializeJobs(resources, departmentInfo, temperatureInfo, miscData, upgrades);
 
-		ModuleGateway.initialize(resources, resourceData, temperatureInfo, worldInfo, departmentInfo, jobInfo, situationData, upgrades, miscData);
+		LogicModuleContainer temp = new LogicModuleContainer(resources, resourceData, temperatureInfo, worldInfo, departmentInfo, jobInfo, situationData, upgrades, miscData);
+		Strategy.setLogicModuleContainer(temp);
+
+		return temp;
 	}
 
 	private ResourceData initializeResourceData() {
@@ -69,7 +86,7 @@ public class Initializer{
 		//Job fannerHoney produces "null" because it is managed with separate logic in Hive.java
 		DepartmentJob fannerHoney = new DepartmentJob(resources.nullResource(), resourceNullStrategy, departments.getFanner(), 0.5, .09, 10.0);
 
-		BeeCreator beeCreator = new BeeCreator(resources, temperatureInfo, miscData, departments, 0.0, .002, .4);
+		BeeCreator beeCreator = new BeeCreator(resources.pollen(), temperatureInfo, miscData, departments, 0.0, .002, .4);
 		HiveTemperatureRegulator hiveTemperatureRegulator = new HiveTemperatureRegulator(temperatureInfo, upgrades, .5, 0.0, 2.5);
 
 		JobInfo temp = new JobInfo(foragerNectar, foragerPollen, waxMasonWax, droneXP,

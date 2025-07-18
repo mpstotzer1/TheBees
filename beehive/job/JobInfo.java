@@ -1,10 +1,9 @@
-//All the job-related info
-//Job nomenclature: "department" + "ResourceInfluenced"
 package beehive.job;
 
 import java.util.ArrayList;
 
 public class JobInfo {
+	//Job nomenclature: "department" + "ResourceInfluenced"
 	//Additive jobs
 	private DepartmentJob foragerNectar;
 	private DepartmentJob foragerPollen;
