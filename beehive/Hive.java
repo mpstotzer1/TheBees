@@ -22,6 +22,8 @@ public class Hive {
 	}
 
 	public void update(){
+		Logger.productionDebugging("Total Bees: " + hiveModuleContainer.getDepartmentInfo().getTotalBees());
+
 		if(hiveModuleContainer.getDepartmentInfo().getTotalBees() <= 0){
 			gameLost = true;
 
@@ -62,18 +64,20 @@ public class Hive {
 		//The order of work, heat generation, and food subtraction matters!
 		for(Job job: hiveModuleContainer.getJobInfo().getDepartmentJobs()){ job.work(); }
 		hiveModuleContainer.getJobInfo().getBeeCreator().work();
+		Logger.productionDebugging("Total Nectar: " + hiveModuleContainer.getResources().nectar().getAmount());
+		Logger.productionDebugging("Total Honey: " + hiveModuleContainer.getResources().honey().getAmount());
 
 		double heatGenerated = 0;
 		for(Job job: hiveModuleContainer.getJobInfo().getAllJobs()){ heatGenerated += job.calcHeat(); }
 		hiveModuleContainer.getTemperatureInfo().changeHiveTemp(heatGenerated);
-		Logger.logTemperatureDebugging("Heat Generated: " + heatGenerated);
+		Logger.logTemperatureDebugging("Heat Generated from Jobs: " + heatGenerated);
 
 		int foodCost = 0;
 		for(Job job: hiveModuleContainer.getJobInfo().getAllJobs()){ foodCost += job.calcFoodCost(); }
 		subFood(foodCost);
+		Logger.productionDebugging("Food Cost from Jobs: " + foodCost);
 
 		hiveModuleContainer.getJobInfo().getHiveTemperatureRegulator().work();
-
 		updateHoney();
 	}
 	private void subFood(int initialFoodCost){
@@ -88,6 +92,7 @@ public class Hive {
 		if(remainingDeficit > 0){
 			int beesToKill = (int)(remainingDeficit * hiveModuleContainer.getUpgrades().starvationMult());
 			hiveModuleContainer.getDepartmentInfo().killBees(beesToKill);
+			Logger.productionDebugging("Bees killed via starvation: " + beesToKill);
 			// Do NOT throw starvation warning here!
 		}
 	}

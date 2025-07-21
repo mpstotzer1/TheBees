@@ -14,8 +14,8 @@ public class BeeCreator extends Job{
     private DepartmentInfo departmentInfo;
 
     public BeeCreator(Resource pollen, TemperatureInfo temperatureInfo, MiscData miscData, DepartmentInfo departmentInfo,
-                      double foodCostConstant, double heatConstant, double productionConstant) {
-        super(foodCostConstant, heatConstant, productionConstant);
+                      double productionConstant, double foodCostConstant, double heatConstant){
+        super(productionConstant, foodCostConstant, heatConstant);
 
         this.pollen = pollen;
         this.temperatureInfo = temperatureInfo;

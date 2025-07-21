@@ -1,5 +1,7 @@
 package beehive.department;
 
+import beehive.logger.Logger;
+
 import java.util.ArrayList;
 
 public class DepartmentInfo {
@@ -39,18 +41,24 @@ public class DepartmentInfo {
 
 
 	public void adjustBeesEverywhere(int numBees){
+		int sign = 0;
+		if(numBees < 0){ sign = -1;}
+		else{ sign = 1; }
+
+		numBees = Math.abs(numBees);
+
 		int numDepartments = workerDepartments.size();
 		int remainder = numBees % numDepartments;
 		int beesToAddPerDepartment = (numBees - remainder) / numDepartments;
 
 		for(Department dept: workerDepartments){
-			dept.adjustBees(beesToAddPerDepartment);
+			dept.adjustBees(sign * beesToAddPerDepartment);
 		}
 
 		for(Department dept : workerDepartments){
 			if(remainder <= 0){ break; }
 
-			dept.adjustBees(1);
+			dept.adjustBees(sign);
 			remainder--;
 		}
 	}
@@ -60,6 +68,7 @@ public class DepartmentInfo {
 	public void killBees(int beesToKill){
 		beesToKill *= -1;
 		adjustBeesEverywhere(beesToKill);
+		Logger.productionDebugging(beesToKill + " bees were killed");
 
 		//If you're out of bees, your hive is dead and you lose the game (womp womp womp)
 		//Logger.log(beesToKill + " bees killed");

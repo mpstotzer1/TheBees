@@ -2,6 +2,7 @@ NOTE:	The Occurrences have a staggering amount of flexibility. Make the most out
 		unique buffs/debuffs, status effects, etc.
 NOTE:	Newly-created bees are added to the cluster department
 NOTE:   1 tick = 1/2 second
+NOTE:   Standardization: production, food, heat (in that order!)
 
 
 TO DO:
@@ -31,4 +32,8 @@ LEFT OFF AT: AHH! The service locator has turned! (I accidentally used it in the
                     go full dependency injection and try to really isolate the various modules (entities, whatever) so
                     that they need less dependence on other modules)
 
-            Adjusting initializer values so that temperatures are normal again
+            Adjusting initializer values so that food cost and production are balanced
+                DepartmentInfo needs several new, disambiguated methods:
+                    killBees() kills workers and drones
+                    addWorkers() adds workers
+                    No methods to kill only workers or only drones, or add only drones

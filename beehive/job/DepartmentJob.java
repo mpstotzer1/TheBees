@@ -9,8 +9,8 @@ public class DepartmentJob extends Job{
 	private Department department;
 
 	public DepartmentJob(Resource resource, ResourceAdjustStrategy resourceAdjustStrategy, Department department,
-						 double foodCostConstant, double heatConstant, double productionConstant){
-		super(foodCostConstant, heatConstant, productionConstant);
+						 double productionConstant, double foodCostConstant, double heatConstant){
+		super(productionConstant, foodCostConstant, heatConstant);
 
 		this.resource = resource;
 		this.resourceAdjustStrategy = resourceAdjustStrategy;
