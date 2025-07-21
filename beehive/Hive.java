@@ -152,7 +152,6 @@ public class Hive {
 			int beesToKill = lowHygieneLimit - amountHygiene;
 			hiveModuleContainer.getDepartmentInfo().killBees(beesToKill);
 
-			//The number of bees killed by this is NOT tested or fine-tuned. Fix this after testing
 		}
 	}
 	private void checkQueenHealth(){

@@ -8,7 +8,7 @@ public class Department {
 	}
 
 	public int getNumBees(){ return numBees; }
-	public void adjustBees(int n){
+	public void attemptAdjustBees(int n){
 		if((numBees + n) < 0){
 			numBees = 0;
 		}else{

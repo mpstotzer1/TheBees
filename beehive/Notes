@@ -33,7 +33,4 @@ LEFT OFF AT: AHH! The service locator has turned! (I accidentally used it in the
                     that they need less dependence on other modules)
 
             Adjusting initializer values so that food cost and production are balanced
-                DepartmentInfo needs several new, disambiguated methods:
-                    killBees() kills workers and drones
-                    addWorkers() adds workers
-                    No methods to kill only workers or only drones, or add only drones
+                AdjustBees() needs to subtract bees from each department proportional to numBees in that department (see comments there for details)

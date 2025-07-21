@@ -30,7 +30,7 @@ public class Initializer{
 		JobInfo jobInfo = initializeJobs(resources, departmentInfo, temperatureInfo, miscData, upgrades);
 
 		HiveModuleContainer hiveModuleContainer = new HiveModuleContainer(resources, resourceData, temperatureInfo, worldInfo, departmentInfo, jobInfo, situationData, upgrades, miscData);
-		departmentInfo.adjustBeesEverywhere(400);
+		departmentInfo.addWorkers(400);
 
         return new Hive(hiveModuleContainer);
 	}

@@ -3,6 +3,7 @@ package beehive.department;
 import beehive.logger.Logger;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class DepartmentInfo {
 	private Department nurse;
@@ -40,38 +41,49 @@ public class DepartmentInfo {
 	}
 
 
-	public void adjustBeesEverywhere(int numBees){
-		int sign = 0;
-		if(numBees < 0){ sign = -1;}
-		else{ sign = 1; }
+	private void adjustBeesEverywhere(int numBees, ArrayList<Department> departments){
+		Logger.productionDebugging("Adjusted " + numBees);
 
-		numBees = Math.abs(numBees);
+		//For each department, adjust by (deptNumBess/totalBees  *  totalNumBeesAdjusting) with totalBees NOT being the method call but instead being
+		//the original total number BEFORE we started adding/subtracting bees.
+		//While doing so, add up the exact integer number of bees that have been killed so far. When you've gone through
+		//all the departments, subtract this from the original numBees parameter to get how many bee(s) you've missed.
+		//Then, go through a while loop and subtract these remaining fractional bees (it shouldn't be higher than 1?)
+		//This method must NEVER subtract more bees from a department than the department has (otherwise not enough bees
+		//will be subtracted).
+		//Much of the old code below can be recycled :)
 
-		int numDepartments = workerDepartments.size();
-		int remainder = numBees % numDepartments;
-		int beesToAddPerDepartment = (numBees - remainder) / numDepartments;
 
-		for(Department dept: workerDepartments){
-			dept.adjustBees(sign * beesToAddPerDepartment);
-		}
-
-		for(Department dept : workerDepartments){
-			if(remainder <= 0){ break; }
-
-			dept.adjustBees(sign);
-			remainder--;
-		}
+//		//First adds/subs equal number of bees from each department, then adds/subs any remaining bees randomly
+//		int sign = calcSign(numBees);
+//
+//		int numDepartments = departments.size();
+//		int remainder = Math.abs(numBees) % numDepartments;
+//		int beesToAddPerDepartment = (Math.abs(numBees) - remainder) / numDepartments;
+//
+//		for(Department dept: departments){
+//			dept.attemptAdjustBees(sign * beesToAddPerDepartment);
+//		}
+//
+//		Random rand = new Random();
+//		while(remainder > 0){
+//			int randIndex = rand.nextInt(departments.size());
+//			departments.get(randIndex).attemptAdjustBees(sign);
+//
+//			remainder--;
+//		}
 	}
-	public void addBeesToDepartment(int beesToAdd, Department destination){
-		destination.adjustBees(beesToAdd);
+	private int calcSign(int number){
+		if(number < 0){ return -1;}
+		else{ return 1; }
+	}
+	public void addWorkers(int numWorkers){
+		adjustBeesEverywhere(numWorkers, workerDepartments);
 	}
 	public void killBees(int beesToKill){
 		beesToKill *= -1;
-		adjustBeesEverywhere(beesToKill);
+		adjustBeesEverywhere(beesToKill, allDepartments);
 		Logger.productionDebugging(beesToKill + " bees were killed");
-
-		//If you're out of bees, your hive is dead and you lose the game (womp womp womp)
-		//Logger.log(beesToKill + " bees killed");
 	}
 	public void killPercentBees(double percentToKill){
 		int total = getTotalBees();
@@ -96,5 +108,4 @@ public class DepartmentInfo {
     public Department getFanner() { return fanner; }
     public Department getDrone() { return drone; }
     public Department getCluster() { return cluster; }
-    //public ArrayList<Department> getDepartments() { return departments; }
 }
