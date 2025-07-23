@@ -43,29 +43,28 @@ public class DepartmentInfo {
 
 	public void addWorkers(int numWorkers){
 		int originalTotalBees = getTotalBees();
+		int beesLeftToAdd = numWorkers;
 
-		int beesAddedSoFar = 0;
 		for(Department dept: workerDepartments){
 			double percentPopulation = dept.getNumBees() / (double) originalTotalBees;
 			int toAdd = (int)(percentPopulation * numWorkers);
 
 			dept.addBees(toAdd);
-			beesAddedSoFar += toAdd;
+			beesLeftToAdd -= toAdd;
 		}
 
 		Random rand = new Random();
-		int leftoverBees = numWorkers - beesAddedSoFar;
-		while(leftoverBees > 0){
+		while(beesLeftToAdd > 0){
 			int randIndex = rand.nextInt(workerDepartments.size());
 			workerDepartments.get(randIndex).addBees(1);
 
-			leftoverBees--;
+			beesLeftToAdd--;
 		}
 	}
 	public void killBees(int beesToKill){
 		int originalTotalBees = getTotalBees();
-
 		int beesLeftToKill = beesToKill;
+
 		for(Department dept: allDepartments){
 			double percentPopulation = dept.getNumBees() / (double)(originalTotalBees);
 			int toKill = (int)(percentPopulation * beesToKill);

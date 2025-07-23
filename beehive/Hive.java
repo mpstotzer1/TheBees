@@ -64,8 +64,9 @@ public class Hive {
 		//The order of work, heat generation, and food subtraction matters!
 		for(Job job: hiveModuleContainer.getJobInfo().getDepartmentJobs()){ job.work(); }
 		hiveModuleContainer.getJobInfo().getBeeCreator().work();
+		Logger.productionDebugging("Food to be produced: " + (hiveModuleContainer.getJobInfo().getForagerNectar().calcProduction() * hiveModuleContainer.getResources().nectar().getPotency()));
 		Logger.productionDebugging("Total Nectar: " + hiveModuleContainer.getResources().nectar().getAmount());
-		Logger.productionDebugging("Total Honey: " + hiveModuleContainer.getResources().honey().getAmount());
+
 
 		double heatGenerated = 0;
 		for(Job job: hiveModuleContainer.getJobInfo().getAllJobs()){ heatGenerated += job.calcHeat(); }
@@ -114,14 +115,22 @@ public class Hive {
 		Resource honey = hiveModuleContainer.getResources().honey();
 		Resource nectar = hiveModuleContainer.getResources().nectar();
 		int amountNectar = hiveModuleContainer.getResources().nectar().getAmount();
-		int nectarUsedByFanners = hiveModuleContainer.getJobInfo().getFannerHoney().calcProduction();
+		int maxNectarUsedByFanners = hiveModuleContainer.getJobInfo().getFannerHoney().calcProduction();
 		//Throw "Unused Fanners!" warning if fannerHoney.calcProduction() > nectar.getAmount()
-		int honeyPotency = hiveModuleContainer.getResources().honey().getPotency();
 
-		int nectarDrained = Math.min(amountNectar, nectarUsedByFanners);
-
-		honey.add(nectarDrained / honeyPotency);
+		int nectarDrained = Math.min(amountNectar, maxNectarUsedByFanners);
+		honey.add(calcHoneyToAdd(nectarDrained));
 		nectar.sub(nectarDrained);
+		Logger.productionDebugging("Honey to be produced: " + (nectarDrained / hiveModuleContainer.getResources().honey().getPotency()));
+		Logger.productionDebugging("Total Honey: " + hiveModuleContainer.getResources().honey().getAmount());
+	}
+	private int calcHoneyToAdd(int nectarDrained){
+		int honeyPotency = hiveModuleContainer.getResources().honey().getPotency();
+		double fannerProdMod = hiveModuleContainer.getJobInfo().getFannerHoney().getProdMod().calcMultiplier();
+
+		int amountHoneyToAdd = (int)(fannerProdMod * nectarDrained / honeyPotency);
+
+		return amountHoneyToAdd;
 	}
 
 	private void updateOccurrences(){

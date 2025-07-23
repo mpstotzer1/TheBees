@@ -18,7 +18,7 @@ public class Runner{
 
 			hive.update();
 
-			TimeUnit.MILLISECONDS.sleep(10);
+			//TimeUnit.MILLISECONDS.sleep(10);
 			debugCounter++;
 		}
 		System.out.println("Number of Ticks: " + debugCounter);

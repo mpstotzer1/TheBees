@@ -26,8 +26,8 @@ public class BeeCreator extends Job{
     protected void workOverride(){
         if(insideBroodTempRange()){
             int beesToAdd = calcNumBeesToAdd();
-            departmentInfo.addWorkers(beesToAdd); //DEBUG
-            //hive.addBeesToCluster(beesToAdd);  //DEBUG
+            departmentInfo.addWorkers(beesToAdd);
+            Logger.productionDebugging("Bees Produced: " + beesToAdd);
 
             int pollenCost = simpleRound(beesToAdd / prodMods.calcMultiplier());
             pollen.sub(pollenCost);

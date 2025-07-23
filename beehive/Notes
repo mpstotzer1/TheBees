@@ -2,7 +2,7 @@ NOTE:	The Occurrences have a staggering amount of flexibility. Make the most out
 		unique buffs/debuffs, status effects, etc.
 NOTE:	Newly-created bees are added to the cluster department
 NOTE:   1 tick = 1/2 second
-NOTE:   Standardization: production, food, heat (in that order!)
+NOTE:   Standard Order: production, food, heat
 
 
 TO DO:
@@ -34,3 +34,4 @@ LEFT OFF AT: AHH! The service locator has turned! (I accidentally used it in the
                     that they need less dependence on other modules)
 
             Adjusting initializer values so that food cost and production are balanced
+                Something wacky is going on with the honey production...also possibly wrongly order constructors in the initializer?
