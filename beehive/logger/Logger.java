@@ -16,4 +16,9 @@ public class Logger {
         OutputDevice outputDevice = new PrintlnOutput();
         outputDevice.output(logInfo);
     }
+
+    public static void warning(String logInfo){
+        OutputDevice outputDevice = new PrintlnOutput();
+        outputDevice.output(logInfo);
+    }
 }

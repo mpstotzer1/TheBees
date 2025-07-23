@@ -4,7 +4,6 @@ import beehive.logger.Logger;
 
 import java.util.concurrent.TimeUnit;
 
-//Runs the game
 public class Runner{
 	
 	public static void main(String[] args) throws InterruptedException {

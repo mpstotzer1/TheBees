@@ -25,6 +25,7 @@ Fragilities:
     -The equations in occurrences (and possibly elsewhere) can have a div0 error if the number of bees is zero
     -Occurrence handling methods full of hard-coded values
     -Magic number of 400 bees added to Hive during the initializeHive() method
+    -Halting problem inefficiency in DepartmentInfo's killBees()
 
 
 LEFT OFF AT: AHH! The service locator has turned! (I accidentally used it in the constructor for something (maybe Season)
@@ -33,4 +34,3 @@ LEFT OFF AT: AHH! The service locator has turned! (I accidentally used it in the
                     that they need less dependence on other modules)
 
             Adjusting initializer values so that food cost and production are balanced
-                AdjustBees() needs to subtract bees from each department proportional to numBees in that department (see comments there for details)

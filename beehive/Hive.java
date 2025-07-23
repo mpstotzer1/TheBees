@@ -91,8 +91,8 @@ public class Hive {
 
 		if(remainingDeficit > 0){
 			int beesToKill = (int)(remainingDeficit * hiveModuleContainer.getUpgrades().starvationMult());
+			Logger.productionDebugging("Bees to starve: " + beesToKill);
 			hiveModuleContainer.getDepartmentInfo().killBees(beesToKill);
-			Logger.productionDebugging("Bees killed via starvation: " + beesToKill);
 			// Do NOT throw starvation warning here!
 		}
 	}
@@ -150,8 +150,8 @@ public class Hive {
 
 		if(amountHygiene < lowHygieneLimit){
 			int beesToKill = lowHygieneLimit - amountHygiene;
+			Logger.productionDebugging("Bees to die via hygiene: " + beesToKill);
 			hiveModuleContainer.getDepartmentInfo().killBees(beesToKill);
-
 		}
 	}
 	private void checkQueenHealth(){
