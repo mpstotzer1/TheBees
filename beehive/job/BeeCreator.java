@@ -27,7 +27,7 @@ public class BeeCreator extends Job{
         if(insideBroodTempRange()){
             int beesToAdd = calcNumBeesToAdd();
             departmentInfo.addWorkers(beesToAdd);
-            Logger.productionDebugging("Bees Produced: " + beesToAdd);
+            Logger.beeCreation("Bees Produced: " + beesToAdd);
 
             int pollenCost = simpleRound(beesToAdd / prodMods.calcMultiplier());
             pollen.sub(pollenCost);

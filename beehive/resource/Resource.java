@@ -1,5 +1,7 @@
 package beehive.resource;
 
+import beehive.logger.Logger;
+
 public class Resource {
 	protected int amount;
 	
@@ -14,12 +16,19 @@ public class Resource {
 	public void add(int a){ amount += a; }
 	public void sub(int a){
 		amount -= a;
-		if(amount < 0){ amount = 0; }
+		if(amount < 0){
+			Logger.warning("Attempted to subtract more from resource than able");
+			amount = 0;
+		}
 	}
-	public void addPercent(double p){ amount += amount * p; }
+	public void addPercent(double p){
+		add(calcPercent(p));
+	}
 	public void subPercent(double p){
-		amount -= amount * p;
-		if(amount < 0){ amount = 0; }
+		sub(calcPercent(p));
+	}
+	private int calcPercent(double p){
+		return (int)(amount * (p / 100));
 	}
 	
 	public int getAmount(){ return amount; }

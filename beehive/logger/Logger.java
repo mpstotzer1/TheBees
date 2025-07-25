@@ -8,12 +8,22 @@ public class Logger {
     }
 
     public static void logTemperatureDebugging(String logInfo){
-        OutputDevice outputDevice = new NullOutput();
+        OutputDevice outputDevice = new PrintlnOutput();
         outputDevice.output(logInfo);
     }
 
     public static void productionDebugging(String logInfo){
+        OutputDevice outputDevice = new NullOutput();
+        outputDevice.output(logInfo);
+    }
+
+    public static void beeCreation(String logInfo){
         OutputDevice outputDevice = new PrintlnOutput();
+        outputDevice.output(logInfo);
+    }
+
+    public static void heatByJob(String logInfo){
+        OutputDevice outputDevice = new NullOutput();
         outputDevice.output(logInfo);
     }
 

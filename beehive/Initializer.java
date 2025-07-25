@@ -49,8 +49,9 @@ public class Initializer{
 		Department fanner = new Department();
 		Department drone = new Department();
 		Department cluster = new Department();
+		Department tempRegulator = new Department();
 
-		DepartmentInfo temp = new DepartmentInfo(nurse, forager, guard, waxMason, houseBee, fanner, cluster, drone);
+		DepartmentInfo temp = new DepartmentInfo(nurse, forager, guard, waxMason, houseBee, fanner, cluster, drone, tempRegulator);
 
 		return temp;
 	}
@@ -64,16 +65,16 @@ public class Initializer{
 		DepartmentJob waxMasonWax = new DepartmentJob(resources.wax(), resourceAddStrategy, departments.getWaxMason(), 1.0, .5, 0.024);
 		DepartmentJob droneXP = new DepartmentJob(resources.xp(), resourceAddStrategy, departments.getDrone(), .35, .8, 0.04);
 
-		DepartmentJob nurseQueenHealth = new DepartmentJob(resources.queenHealth(), resourceSetStrategy, departments.getNurse(), 1.0, .4, 0.044);
+		DepartmentJob nurseQueenHealth = new DepartmentJob(resources.queenHealth(), resourceSetStrategy, departments.getNurse(), 1.0, .4, 0.034);
 		DepartmentJob guardStrength = new DepartmentJob(resources.strength(), resourceSetStrategy, departments.getGuard(), 1.0, .5, 0.024);
-		DepartmentJob houseBeeHygiene = new DepartmentJob(resources.hygiene(), resourceSetStrategy, departments.getHouseBee(), 1.0, .4, 0.05);
+		DepartmentJob houseBeeHygiene = new DepartmentJob(resources.hygiene(), resourceSetStrategy, departments.getHouseBee(), 1.0, .4, 0.04);
 
-		DepartmentJob clusterIdle = new DepartmentJob(resources.nullResource(), resourceNullStrategy, departments.getCluster(), 1.0, 0.2, 0.0);
+		DepartmentJob clusterIdle = new DepartmentJob(resources.nullResource(), resourceNullStrategy, departments.getCluster(), 1.0, 0.2, 0.007);
 		//Job fannerHoney produces "null" because it is managed with separate logic in Hive.java
-		DepartmentJob fannerHoney = new DepartmentJob(resources.nullResource(), resourceNullStrategy, departments.getFanner(), 10.0, .6, 0.09);
+		DepartmentJob fannerHoney = new DepartmentJob(resources.nullResource(), resourceNullStrategy, departments.getFanner(), 10.0, .6, 0.05);
+		DepartmentJob hiveTemperatureRegulator = new DepartmentJob(resources.nullResource(), resourceNullStrategy, departments.getFanner(), 1.0, .3, 0.0);
 
 		BeeCreator beeCreator = new BeeCreator(resources.pollen(), temperatureInfo, miscData, departments, 1.0, .4, .02);
-		HiveTemperatureRegulator hiveTemperatureRegulator = new HiveTemperatureRegulator(temperatureInfo, upgrades, 1.0, .3, 0.0);
 
 		JobInfo temp = new JobInfo(foragerNectar, foragerPollen, droneXP, waxMasonWax,
 				guardStrength, nurseQueenHealth, houseBeeHygiene,
@@ -89,7 +90,7 @@ public class Initializer{
 		return temp;
 	}
 	private TemperatureInfo initializeTemperature() {
-		TemperatureInfo temp = new TemperatureInfo(5.0);
+		TemperatureInfo temp = new TemperatureInfo(10.0);
 
 		return temp;
 	}

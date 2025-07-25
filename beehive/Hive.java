@@ -63,13 +63,15 @@ public class Hive {
 	private void updateJobs(){
 		//The order of work, heat generation, and food subtraction matters!
 		for(Job job: hiveModuleContainer.getJobInfo().getDepartmentJobs()){ job.work(); }
-		hiveModuleContainer.getJobInfo().getBeeCreator().work();
+		//hiveModuleContainer.getJobInfo().getBeeCreator().work();
 		Logger.productionDebugging("Food to be produced: " + (hiveModuleContainer.getJobInfo().getForagerNectar().calcProduction() * hiveModuleContainer.getResources().nectar().getPotency()));
 		Logger.productionDebugging("Total Nectar: " + hiveModuleContainer.getResources().nectar().getAmount());
 
-
 		double heatGenerated = 0;
-		for(Job job: hiveModuleContainer.getJobInfo().getAllJobs()){ heatGenerated += job.calcHeat(); }
+		for(Job job: hiveModuleContainer.getJobInfo().getAllJobs()){
+			heatGenerated += job.calcHeat();
+			Logger.heatByJob("Heat produced by a job: " + job.calcHeat());
+		}
 		hiveModuleContainer.getTemperatureInfo().changeHiveTemp(heatGenerated);
 		Logger.logTemperatureDebugging("Heat Generated from Jobs: " + heatGenerated);
 
@@ -78,7 +80,9 @@ public class Hive {
 		subFood(foodCost);
 		Logger.productionDebugging("Food Cost from Jobs: " + foodCost);
 
-		hiveModuleContainer.getJobInfo().getHiveTemperatureRegulator().work();
+		//hiveModuleContainer.getJobInfo().getHiveTemperatureRegulator().work();
+		regulateTemperature();
+		hiveModuleContainer.getJobInfo().getBeeCreator().work();
 		updateHoney();
 	}
 	private void subFood(int initialFoodCost){
@@ -119,9 +123,11 @@ public class Hive {
 		//Throw "Unused Fanners!" warning if fannerHoney.calcProduction() > nectar.getAmount()
 
 		int nectarDrained = Math.min(amountNectar, maxNectarUsedByFanners);
-		honey.add(calcHoneyToAdd(nectarDrained));
+		int honeyToAdd = calcHoneyToAdd(nectarDrained);
+		honey.add(honeyToAdd);
 		nectar.sub(nectarDrained);
-		Logger.productionDebugging("Honey to be produced: " + (nectarDrained / hiveModuleContainer.getResources().honey().getPotency()));
+
+		Logger.productionDebugging("Honey to be produced: " + honeyToAdd);
 		Logger.productionDebugging("Total Honey: " + hiveModuleContainer.getResources().honey().getAmount());
 	}
 	private int calcHoneyToAdd(int nectarDrained){
@@ -131,6 +137,49 @@ public class Hive {
 		int amountHoneyToAdd = (int)(fannerProdMod * nectarDrained / honeyPotency);
 
 		return amountHoneyToAdd;
+	}
+	private void regulateTemperature(){
+		double tempAdjustment = calcTempAdjustment();
+		hiveModuleContainer.getTemperatureInfo().changeHiveTemp(tempAdjustment);
+
+		Logger.logTemperatureDebugging("Temperature Regulation Adjustment: " + tempAdjustment);
+	}
+	private double calcTempAdjustment(){
+		if(hiveTooHot()){
+			return clampToStep(maxMinusHive());
+		}else if(hiveTooCold()){
+			return clampToStep(minMinusHive());
+		}
+
+		return 0.0;
+	}
+	private boolean hiveTooHot(){
+		return (hiveModuleContainer.getTemperatureInfo().getHiveTemp() > hiveModuleContainer.getTemperatureInfo().getTemperatureRegulationRanges().getMaxTemperature());
+	}
+	private boolean hiveTooCold(){
+		return (hiveModuleContainer.getTemperatureInfo().getHiveTemp() < hiveModuleContainer.getTemperatureInfo().getTemperatureRegulationRanges().getMinTemperature());
+	}
+	private double maxMinusHive(){
+		double maxTemp = hiveModuleContainer.getTemperatureInfo().getTemperatureRegulationRanges().getMaxTemperature();
+		double currentHiveTemp = hiveModuleContainer.getTemperatureInfo().getHiveTemp();
+
+		return (maxTemp - currentHiveTemp);
+	}
+	private double minMinusHive(){
+		double minTemp = hiveModuleContainer.getTemperatureInfo().getTemperatureRegulationRanges().getMinTemperature();
+		double currentHiveTemp = hiveModuleContainer.getTemperatureInfo().getHiveTemp();
+
+		return (minTemp - currentHiveTemp);
+	}
+	private double clampToStep(double tempChange) {
+		double possibleStep = hiveModuleContainer.getTemperatureInfo().getTempRegulationStep() * hiveModuleContainer.getJobInfo().getHiveTemperatureRegulator().getProdMod().calcMultiplier();
+
+		if(Math.abs(tempChange) < possibleStep){
+			return tempChange;
+		}else{
+			if(tempChange < 0){ return possibleStep * -1; }
+			else{ return possibleStep; }
+		}
 	}
 
 	private void updateOccurrences(){
@@ -206,15 +255,15 @@ public class Hive {
 			}else if(randPredator == 2){//Hornets
 				hiveModuleContainer.getDepartmentInfo().killPercentBees(7);
 			}else if(randPredator == 3){//Mice--only in winter?
-				hiveModuleContainer.getResources().wax().subPercent(.10);
-				hiveModuleContainer.getResources().honey().subPercent(.10);
-				hiveModuleContainer.getResources().pollen().subPercent(.10);
-				hiveModuleContainer.getResources().nectar().subPercent(.10);
+				hiveModuleContainer.getResources().wax().subPercent(10);
+				hiveModuleContainer.getResources().honey().subPercent(10);
+				hiveModuleContainer.getResources().pollen().subPercent(10);
+				hiveModuleContainer.getResources().nectar().subPercent(10);
 			}else if(randPredator == 4){//Bears--Make less common? More of
-				hiveModuleContainer.getResources().wax().subPercent(.10);
-				hiveModuleContainer.getResources().honey().subPercent(.10);
-				hiveModuleContainer.getResources().pollen().subPercent(.10);
-				hiveModuleContainer.getResources().nectar().subPercent(.10);
+				hiveModuleContainer.getResources().wax().subPercent(10);
+				hiveModuleContainer.getResources().honey().subPercent(10);
+				hiveModuleContainer.getResources().pollen().subPercent(10);
+				hiveModuleContainer.getResources().nectar().subPercent(10);
 			}
 
 		}

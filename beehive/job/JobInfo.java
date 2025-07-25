@@ -16,10 +16,10 @@ public class JobInfo {
 	//Null jobs
 	private DepartmentJob fannerHoney;
 	private DepartmentJob clusterIdle;
+	private DepartmentJob hiveTemperatureRegulator;
 	//Hive jobs
 	private BeeCreator beeCreator;
-	private HiveTemperatureRegulator hiveTemperatureRegulator;
-	//List of jobs
+	//Lists of jobs
     private ArrayList<DepartmentJob> departmentJobs = new ArrayList<>();
 	private ArrayList<Job> allJobs = new ArrayList<>();
 	
@@ -27,7 +27,7 @@ public class JobInfo {
     public JobInfo(DepartmentJob foragerNectar, DepartmentJob foragerPollen, DepartmentJob droneXP, DepartmentJob waxMasonWax,
 				   DepartmentJob guardStrength, DepartmentJob nurseQueenHealth, DepartmentJob houseBeeHygiene,
 				   DepartmentJob fannerHoney, DepartmentJob clusterIdle,
-				   BeeCreator beeCreator, HiveTemperatureRegulator hiveTemperatureRegulator){
+				   BeeCreator beeCreator, DepartmentJob hiveTemperatureRegulator){
 		this.foragerNectar = foragerNectar;
 		this.foragerPollen = foragerPollen;
 		this.droneXP = droneXP;
@@ -49,10 +49,10 @@ public class JobInfo {
 		this.departmentJobs.add(houseBeeHygiene);
 		this.departmentJobs.add(fannerHoney);
 		this.departmentJobs.add(clusterIdle);
+		this.departmentJobs.add(hiveTemperatureRegulator);
 
 		allJobs.addAll(departmentJobs);
 		allJobs.add(beeCreator);
-		allJobs.add(hiveTemperatureRegulator);
 	}
 	
 	//Getters and Setters
@@ -65,8 +65,8 @@ public class JobInfo {
 	public DepartmentJob getFannerHoney() { return fannerHoney; }
 	public DepartmentJob getDroneXP() { return droneXP; }
 	public DepartmentJob getClusterIdle() { return clusterIdle; }
+	public DepartmentJob getHiveTemperatureRegulator() { return hiveTemperatureRegulator; }
 	public BeeCreator getBeeCreator() { return beeCreator; }
-	public HiveTemperatureRegulator getHiveTemperatureRegulator() { return hiveTemperatureRegulator; }
 	public ArrayList<DepartmentJob> getDepartmentJobs() { return departmentJobs; }
 	public ArrayList<Job> getAllJobs() {return allJobs; }
 }

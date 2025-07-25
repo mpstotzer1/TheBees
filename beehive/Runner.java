@@ -14,7 +14,7 @@ public class Runner{
 		int debugCounter = 0;
 
 		while(!(hive.getGameLost()) && debugCounter < 160 ){
-			Logger.basicLog("-------------------- Tick " + debugCounter + " --------------------");
+			Logger.basicLog("------------------------- Tick " + debugCounter + " -------------------------");
 
 			hive.update();
 

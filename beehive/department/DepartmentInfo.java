@@ -14,11 +14,12 @@ public class DepartmentInfo {
 	private Department fanner;
 	private Department cluster;
 	private Department drone;
+	private Department tempRegulator;
     private ArrayList<Department> allDepartments = new ArrayList<>();
 	private ArrayList<Department> workerDepartments = new ArrayList<>();
 
     public DepartmentInfo(Department nurse, Department forager, Department guard, Department waxMason,
-			Department houseBee, Department fanner, Department cluster, Department drone) {
+			Department houseBee, Department fanner, Department cluster, Department drone, Department tempRegulator) {
 		this.nurse = nurse;
 		this.forager = forager;
 		this.guard = guard;
@@ -27,6 +28,7 @@ public class DepartmentInfo {
 		this.fanner = fanner;
 		this.cluster = cluster;
 		this.drone = drone;
+		this.tempRegulator = tempRegulator;
 
 		workerDepartments.add(nurse);
 		workerDepartments.add(forager);
@@ -35,6 +37,7 @@ public class DepartmentInfo {
 		workerDepartments.add(houseBee);
 		workerDepartments.add(fanner);
 		workerDepartments.add(cluster);
+		workerDepartments.add(tempRegulator);
 
 		allDepartments.addAll(workerDepartments);
 		allDepartments.add(drone);
