@@ -14,6 +14,7 @@ public class Hive {
 	private boolean isWinter;
 	private HiveModuleContainer hiveModuleContainer;
 
+
 	public Hive(HiveModuleContainer hiveModuleContainer){
 		gameLost = false;
 		isWinter = (hiveModuleContainer.getWorldInfo().getSeason().getSeasonType() == SeasonType.WINTER);
@@ -23,20 +24,17 @@ public class Hive {
 
 	public void update(){
 		Logger.productionDebugging("Total Bees: " + hiveModuleContainer.getDepartmentInfo().getTotalBees());
+		Logger.logTemperatureDebugging("Current Hive Temp: " + hiveModuleContainer.getTemperatureInfo().getHiveTemp());
 
 		if(hiveModuleContainer.getDepartmentInfo().getTotalBees() <= 0){
 			gameLost = true;
-
 			return;
 		}
 
-		Logger.logTemperatureDebugging("Current Hive Temp: " + hiveModuleContainer.getTemperatureInfo().getHiveTemp());
-
 		if(isWinter){ updateWinter(); }
 		else{ updateSummer(); }
-
-		//Maybe throw warnings/memos here?
 	}
+
 	public void updateSummer(){
 		updateWorld();
 		updateJobs();
@@ -232,11 +230,6 @@ public class Hive {
 
 		return (int)(-1 * percentGuard * (amountStrength * strengthMult + 100));
 	}
-//		//chancePest is a linear equation; more hygiene = lower chance of pests
-//		int chancePest = (int)(-1*(departmentInfo.getGuard().getNumBees() / getTotalBees())*resources.strength().getAmount() + 100);
-//		if( chancePest >= (int)(Math.random()*100) ){
-//			killPercentBees(.1);
-//		}
 	private void handleSituations(){
 		createSituations();
 		updateSituations();

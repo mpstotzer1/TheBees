@@ -9,6 +9,6 @@ public class HeatWave implements Strategy{
         hiveModuleContainer.getJobInfo().getGuardStrength().getProdMod().addMod(duration, .85);
     }
     public void doContinuous(HiveModuleContainer hiveModuleContainer){
-        hiveModuleContainer.getTemperatureInfo().changeHiveTemp(0.3);
+        hiveModuleContainer.getTemperatureInfo().changeHiveTemp(1.5);
     }
 }

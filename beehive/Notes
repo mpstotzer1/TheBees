@@ -6,10 +6,9 @@ NOTE:   Standard Order: production, food, heat
 
 
 TO DO:
-        -Refactor winter
+        -Separate the handleEvents() hardlogic into a different class if necessary
         -Prune and test which upgrades are to keep (most of them unused right now)
         -Figure out how to throw warnings to the player
-        -Make ColdSnap and HeatWave adjust the world temperature too
 
 
 CONSIDERATIONS:
@@ -28,10 +27,4 @@ Fragilities:
     -Halting problem inefficiency in DepartmentInfo's killBees()
 
 
-LEFT OFF AT: AHH! The service locator has turned! (I accidentally used it in the constructor for something (maybe Season)
-                    but the SL hadn't been initialized at that point and I got a nullptr exception. To fix this, maybe
-                    go full dependency injection and try to really isolate the various modules (entities, whatever) so
-                    that they need less dependence on other modules)
-
-            Adjusting initializer values so that food cost and production are balanced
-                Change fannerHoney to be a hive job
+LEFT OFF AT: Get the graphics going! Woot Woot!
