@@ -11,33 +11,27 @@ public class DepartmentInfo {
 	private Department guard;
 	private Department waxMason;
 	private Department houseBee;
-	private Department fanner;
 	private Department cluster;
 	private Department drone;
-	private Department tempRegulator;
     private ArrayList<Department> allDepartments = new ArrayList<>();
 	private ArrayList<Department> workerDepartments = new ArrayList<>();
 
     public DepartmentInfo(Department nurse, Department forager, Department guard, Department waxMason,
-			Department houseBee, Department fanner, Department cluster, Department drone, Department tempRegulator) {
+			Department houseBee, Department cluster, Department drone) {
 		this.nurse = nurse;
 		this.forager = forager;
 		this.guard = guard;
 		this.waxMason = waxMason;
 		this.houseBee = houseBee;
-		this.fanner = fanner;
 		this.cluster = cluster;
 		this.drone = drone;
-		this.tempRegulator = tempRegulator;
 
 		workerDepartments.add(nurse);
 		workerDepartments.add(forager);
 		workerDepartments.add(guard);
 		workerDepartments.add(waxMason);
 		workerDepartments.add(houseBee);
-		workerDepartments.add(fanner);
 		workerDepartments.add(cluster);
-		workerDepartments.add(tempRegulator);
 
 		allDepartments.addAll(workerDepartments);
 		allDepartments.add(drone);
@@ -106,7 +100,6 @@ public class DepartmentInfo {
     public Department getGuard() { return guard; }
     public Department getWaxMason() { return waxMason; }
     public Department getHouseBee() { return houseBee; }
-    public Department getFanner() { return fanner; }
     public Department getDrone() { return drone; }
     public Department getCluster() { return cluster; }
 }

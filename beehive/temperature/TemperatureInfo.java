@@ -3,11 +3,11 @@ package beehive.temperature;
 public class TemperatureInfo {
 	private double hiveTemp;
 	private TemperatureRegulationRanges temperatureRegulationRanges;
-	private double tempRegulationStep;
+	private double tempRegulationStepCnst;
 
 	//The constructor
-	public TemperatureInfo(double tempRegulationStep){
-		this.tempRegulationStep = tempRegulationStep;
+	public TemperatureInfo(double tempRegulationStepCnst){
+		this.tempRegulationStepCnst = tempRegulationStepCnst;
 		this.hiveTemp = 94.0;
 		this.temperatureRegulationRanges = TemperatureRegulationRanges.BROOD;
 	}
@@ -18,5 +18,5 @@ public class TemperatureInfo {
 	//The getters and setters
 	public double getHiveTemp() { return hiveTemp; }
 	public TemperatureRegulationRanges getTemperatureRegulationRanges() { return temperatureRegulationRanges; }
-	public double getTempRegulationStep() { return tempRegulationStep; }
+	public double getTempRegulationStepCnst() { return tempRegulationStepCnst; }
 }

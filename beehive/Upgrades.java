@@ -7,7 +7,7 @@ public record Upgrades(
 		double guardStrengthProd,
 		double waxMasonWaxProd,
 		double houseBeeHygieneProd,
-		double fannerHoneyProd,
+		double HoneyProd,
 		double droneXPProd,
 		double foodCostMult,
 		double insulation,

@@ -13,7 +13,7 @@ public class Logger {
     }
 
     public static void productionDebugging(String logInfo){
-        OutputDevice outputDevice = new NullOutput();
+        OutputDevice outputDevice = new PrintlnOutput();
         outputDevice.output(logInfo);
     }
 

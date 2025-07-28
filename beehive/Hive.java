@@ -63,7 +63,6 @@ public class Hive {
 	private void updateJobs(){
 		//The order of work, heat generation, and food subtraction matters!
 		for(Job job: hiveModuleContainer.getJobInfo().getDepartmentJobs()){ job.work(); }
-		//hiveModuleContainer.getJobInfo().getBeeCreator().work();
 		Logger.productionDebugging("Food to be produced: " + (hiveModuleContainer.getJobInfo().getForagerNectar().calcProduction() * hiveModuleContainer.getResources().nectar().getPotency()));
 		Logger.productionDebugging("Total Nectar: " + hiveModuleContainer.getResources().nectar().getAmount());
 
@@ -80,10 +79,10 @@ public class Hive {
 		subFood(foodCost);
 		Logger.productionDebugging("Food Cost from Jobs: " + foodCost);
 
-		//hiveModuleContainer.getJobInfo().getHiveTemperatureRegulator().work();
-		regulateTemperature();
+		hiveModuleContainer.getJobInfo().getHiveTemperatureRegulator().work();
 		hiveModuleContainer.getJobInfo().getBeeCreator().work();
-		updateHoney();
+
+		convertLeftoverNectarToHoney();
 	}
 	private void subFood(int initialFoodCost){
 		//subFood() refactored using Google Gemini
@@ -115,71 +114,26 @@ public class Hive {
 			return (currentDeficit - resourceFoodValue);
 		}
 	}
-	private void updateHoney(){
+	private void convertLeftoverNectarToHoney(){
 		Resource honey = hiveModuleContainer.getResources().honey();
 		Resource nectar = hiveModuleContainer.getResources().nectar();
-		int amountNectar = hiveModuleContainer.getResources().nectar().getAmount();
-		int maxNectarUsedByFanners = hiveModuleContainer.getJobInfo().getFannerHoney().calcProduction();
-		//Throw "Unused Fanners!" warning if fannerHoney.calcProduction() > nectar.getAmount()
+		int leftoverNectar = hiveModuleContainer.getResources().nectar().getAmount();
 
-		int nectarDrained = Math.min(amountNectar, maxNectarUsedByFanners);
-		int honeyToAdd = calcHoneyToAdd(nectarDrained);
+		int honeyToAdd = calcHoneyToAdd(leftoverNectar);
 		honey.add(honeyToAdd);
-		nectar.sub(nectarDrained);
+		nectar.sub(leftoverNectar);
 
 		Logger.productionDebugging("Honey to be produced: " + honeyToAdd);
 		Logger.productionDebugging("Total Honey: " + hiveModuleContainer.getResources().honey().getAmount());
 	}
-	private int calcHoneyToAdd(int nectarDrained){
+	private int calcHoneyToAdd(int leftoverNectar){
+		int nectarPotency = hiveModuleContainer.getResources().nectar().getPotency();
 		int honeyPotency = hiveModuleContainer.getResources().honey().getPotency();
-		double fannerProdMod = hiveModuleContainer.getJobInfo().getFannerHoney().getProdMod().calcMultiplier();
+		int honeyToAdd = (leftoverNectar * nectarPotency) / honeyPotency;
 
-		int amountHoneyToAdd = (int)(fannerProdMod * nectarDrained / honeyPotency);
+		double honeyProdMod = hiveModuleContainer.getUpgrades().HoneyProd();
 
-		return amountHoneyToAdd;
-	}
-	private void regulateTemperature(){
-		double tempAdjustment = calcTempAdjustment();
-		hiveModuleContainer.getTemperatureInfo().changeHiveTemp(tempAdjustment);
-
-		Logger.logTemperatureDebugging("Temperature Regulation Adjustment: " + tempAdjustment);
-	}
-	private double calcTempAdjustment(){
-		if(hiveTooHot()){
-			return clampToStep(maxMinusHive());
-		}else if(hiveTooCold()){
-			return clampToStep(minMinusHive());
-		}
-
-		return 0.0;
-	}
-	private boolean hiveTooHot(){
-		return (hiveModuleContainer.getTemperatureInfo().getHiveTemp() > hiveModuleContainer.getTemperatureInfo().getTemperatureRegulationRanges().getMaxTemperature());
-	}
-	private boolean hiveTooCold(){
-		return (hiveModuleContainer.getTemperatureInfo().getHiveTemp() < hiveModuleContainer.getTemperatureInfo().getTemperatureRegulationRanges().getMinTemperature());
-	}
-	private double maxMinusHive(){
-		double maxTemp = hiveModuleContainer.getTemperatureInfo().getTemperatureRegulationRanges().getMaxTemperature();
-		double currentHiveTemp = hiveModuleContainer.getTemperatureInfo().getHiveTemp();
-
-		return (maxTemp - currentHiveTemp);
-	}
-	private double minMinusHive(){
-		double minTemp = hiveModuleContainer.getTemperatureInfo().getTemperatureRegulationRanges().getMinTemperature();
-		double currentHiveTemp = hiveModuleContainer.getTemperatureInfo().getHiveTemp();
-
-		return (minTemp - currentHiveTemp);
-	}
-	private double clampToStep(double tempChange) {
-		double possibleStep = hiveModuleContainer.getTemperatureInfo().getTempRegulationStep() * hiveModuleContainer.getJobInfo().getHiveTemperatureRegulator().getProdMod().calcMultiplier();
-
-		if(Math.abs(tempChange) < possibleStep){
-			return tempChange;
-		}else{
-			if(tempChange < 0){ return possibleStep * -1; }
-			else{ return possibleStep; }
-		}
+        return (int)(honeyProdMod * honeyToAdd);
 	}
 
 	private void updateOccurrences(){

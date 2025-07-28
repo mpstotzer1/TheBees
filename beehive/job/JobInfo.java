@@ -14,10 +14,9 @@ public class JobInfo {
 	private DepartmentJob nurseQueenHealth;
 	private DepartmentJob houseBeeHygiene;
 	//Null jobs
-	private DepartmentJob fannerHoney;
 	private DepartmentJob clusterIdle;
-	private DepartmentJob hiveTemperatureRegulator;
 	//Hive jobs
+	private HiveTemperatureRegulator hiveTemperatureRegulator;
 	private BeeCreator beeCreator;
 	//Lists of jobs
     private ArrayList<DepartmentJob> departmentJobs = new ArrayList<>();
@@ -26,8 +25,8 @@ public class JobInfo {
     //The constructor
     public JobInfo(DepartmentJob foragerNectar, DepartmentJob foragerPollen, DepartmentJob droneXP, DepartmentJob waxMasonWax,
 				   DepartmentJob guardStrength, DepartmentJob nurseQueenHealth, DepartmentJob houseBeeHygiene,
-				   DepartmentJob fannerHoney, DepartmentJob clusterIdle,
-				   BeeCreator beeCreator, DepartmentJob hiveTemperatureRegulator){
+				   DepartmentJob clusterIdle,
+				   BeeCreator beeCreator, HiveTemperatureRegulator hiveTemperatureRegulator){
 		this.foragerNectar = foragerNectar;
 		this.foragerPollen = foragerPollen;
 		this.droneXP = droneXP;
@@ -35,23 +34,21 @@ public class JobInfo {
 		this.guardStrength = guardStrength;
 		this.nurseQueenHealth = nurseQueenHealth;
 		this.houseBeeHygiene = houseBeeHygiene;
-		this.fannerHoney = fannerHoney;
 		this.clusterIdle = clusterIdle;
 		this.beeCreator = beeCreator;
-		this. hiveTemperatureRegulator = hiveTemperatureRegulator;
+		this.hiveTemperatureRegulator = hiveTemperatureRegulator;
 
-		this.departmentJobs.add(foragerNectar);
-		this.departmentJobs.add(foragerPollen);
-		this.departmentJobs.add(droneXP);
-		this.departmentJobs.add(waxMasonWax);
-		this.departmentJobs.add(guardStrength);
-		this.departmentJobs.add(nurseQueenHealth);
-		this.departmentJobs.add(houseBeeHygiene);
-		this.departmentJobs.add(fannerHoney);
-		this.departmentJobs.add(clusterIdle);
-		this.departmentJobs.add(hiveTemperatureRegulator);
+		departmentJobs.add(foragerNectar);
+		departmentJobs.add(foragerPollen);
+		departmentJobs.add(droneXP);
+		departmentJobs.add(waxMasonWax);
+		departmentJobs.add(guardStrength);
+		departmentJobs.add(nurseQueenHealth);
+		departmentJobs.add(houseBeeHygiene);
+		departmentJobs.add(clusterIdle);
 
 		allJobs.addAll(departmentJobs);
+		allJobs.add(hiveTemperatureRegulator);
 		allJobs.add(beeCreator);
 	}
 	
@@ -62,10 +59,9 @@ public class JobInfo {
 	public DepartmentJob getGuardStrength() { return guardStrength; }
 	public DepartmentJob getWaxMasonWax() { return waxMasonWax; }
 	public DepartmentJob getHouseBeeHygiene() { return houseBeeHygiene; }
-	public DepartmentJob getFannerHoney() { return fannerHoney; }
 	public DepartmentJob getDroneXP() { return droneXP; }
 	public DepartmentJob getClusterIdle() { return clusterIdle; }
-	public DepartmentJob getHiveTemperatureRegulator() { return hiveTemperatureRegulator; }
+	public HiveTemperatureRegulator getHiveTemperatureRegulator() { return hiveTemperatureRegulator; }
 	public BeeCreator getBeeCreator() { return beeCreator; }
 	public ArrayList<DepartmentJob> getDepartmentJobs() { return departmentJobs; }
 	public ArrayList<Job> getAllJobs() {return allJobs; }

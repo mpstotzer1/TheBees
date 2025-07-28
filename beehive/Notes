@@ -34,7 +34,4 @@ LEFT OFF AT: AHH! The service locator has turned! (I accidentally used it in the
                     that they need less dependence on other modules)
 
             Adjusting initializer values so that food cost and production are balanced
-                Changed temperature regulation to be a department job. Now need to make the number of bees in said
-                dept. influence the size of the regulation step made. Follow the updateHoney() pattern where a small
-                number of bees produces a small step and a large number of bees produces a large step. Be wary of
-                crazy temperature step swings, though.
+                Change fannerHoney to be a hive job
